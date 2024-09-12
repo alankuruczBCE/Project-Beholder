@@ -140,7 +140,7 @@ def Center_(): #CENTER TEXT
     time.sleep(0.02)
 
 def BeholdAnimate(): #ANIMATE PROJECT BEHOLDER TITLE
-    logo = """\                                                                                                 
+    logo = """                                                                                                 
                                               █                                                                  
                       █  █ █  ▒  █ █ ░░░██    █                                                                  
                       ███▒ █  ███  █ ███  ███ ██              ██     ░░▓█████████                                
@@ -232,4 +232,16 @@ def typeSlow_(text): #SLOW TYPING
     text = str(text)
     for letter in text:
         print(letter, end='')
-        time.sleep(0.075)
+        time.sleep(0.05)
+
+def flashAnim_(): #ARROW HIT ANIMATION
+    flash = 0.3
+    prints = 30
+    times = 3
+    for number2 in range(0, times):
+        for number in range(0, prints):
+            print("████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████")
+        time.sleep(flash)
+        for number in range(0, prints):
+            print("")
+        time.sleep(flash)
