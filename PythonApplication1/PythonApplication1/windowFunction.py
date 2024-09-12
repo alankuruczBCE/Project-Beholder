@@ -64,7 +64,7 @@ def MoveUpTop_(): #MOVE TEXT TO TOP
     print("")
     print("")
 
-def Center_():
+def Center_(): #CENTER TEXT
     print("")
     print("")
     print("")
@@ -108,7 +108,7 @@ def BeholdAnimate(): #ANIMATE PROJECT BEHOLDER TITLE
     print("")
     print("                                               ⚔Enter your name to begin.⚔")
 
-def CenterMini_():
+def CenterMini_(): #SLIGHTLY CENTER TEXT
     print("")
     print("")
     print("")
@@ -116,7 +116,7 @@ def CenterMini_():
     print("")
 
 
-def art(index):
+def art(index): #INDEX FOR ASCII ART
     if index == 0:
         print("""                                                                                                 
                       ▓░                                                                             
@@ -142,18 +142,18 @@ def art(index):
     █████████████████████████████████████████████████████████████████████████████████████████████████""")
 
 
-def Text_(text):
+def Text_(text): #PLAY ONE LINE OF TEXT
     typeSlow_(text)
     tempLine = input("")
 
-def storySetup(text, index):
+def storySetup(text, index): #SET CUTSCENE
     ClearWindow_()
     CenterMini_()
     typeSlow_(text)
     art(index)
     CenterMini_()
 
-def typeSlow_(text):
+def typeSlow_(text): #SLOW TYPING
     text = str(text)
     for letter in text:
         print(letter, end='')

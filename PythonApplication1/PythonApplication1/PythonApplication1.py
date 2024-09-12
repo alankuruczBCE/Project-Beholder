@@ -18,9 +18,9 @@ windowFunction.MoveUpTop_()
 windowFunction.ClearWindow_
 windowFunction.BeholdAnimate()
 
-name = input("                                                       ")
-windowFunction.Center_()
-windowFunction.typeSlow_("Welcome to a perilous journey. There will be challenges and triumphs. You have seen nothing as of far.")
+name = input("                                                       ") #NAME PROMPT
+windowFunction.Center_() #CENTER NAME PROMPT
+windowFunction.typeSlow_("Welcome to a perilous journey. There will be challenges and triumphs. You have seen nothing as of far.") #SLOW TYPE 1 LINE
 time.sleep(1)
 windowFunction.storySetup("Mladav Bolen - 1654", 0)
 windowFunction.Text_("you are surrounded by an air of desolateness. (ENTER to continue)")
