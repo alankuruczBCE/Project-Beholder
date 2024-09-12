@@ -1,7 +1,6 @@
 ﻿
 from shutil import move
-import time
-import windowFunction
+import time, windowFunction
 
 
 windowFunction.ClearWindow_()
@@ -25,3 +24,4 @@ time.sleep(1)
 windowFunction.storySetup("Mladav Bolen - 1654", 0)
 windowFunction.Text_("you are surrounded by an air of desolateness. (ENTER to continue)")
 windowFunction.Text_("A faint rustle breaks the silence for a second.")
+windowFunction.Text_("Is it time..? I'm probably not going to come out walking but it's worth a try.")
