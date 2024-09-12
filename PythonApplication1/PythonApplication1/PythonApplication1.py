@@ -2,6 +2,13 @@
 from shutil import move
 import time, windowFunction
 
+health = 100
+level = 1
+location = 0
+section = 1
+location = 1
+locationName = "Test"
+
 
 windowFunction.ClearWindow_()
 print("Loading", end='\r') #Print loading, do a carriage return
