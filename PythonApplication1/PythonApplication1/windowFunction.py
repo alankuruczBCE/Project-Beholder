@@ -1,6 +1,7 @@
 ﻿import time, types
 
 
+
 def ClearWindow_(): #CLEAR THE WHOLE WINDOW
     print("")
     time.sleep(0.02)
@@ -62,6 +63,43 @@ def ClearWindow_(): #CLEAR THE WHOLE WINDOW
     time.sleep(0.02)
     print("")
     time.sleep(0.02)
+
+def ClearFrame_(): #CLEAR THE WHOLE WINDOW
+    print("")
+    print("")
+    print("")
+    print("")
+    print("")
+    print("")
+    print("")
+    print("")
+    print("")
+    print("")
+    print("")
+    print("")
+    print("")
+    print("")
+    print("")
+    print("")
+    print("")
+    print("")
+    print("")
+    print("")
+    print("")
+    print("")
+    print("")
+    print("")
+    print("")
+    print("")
+    print("")
+    print("")
+    print("")
+    print("")
+    print("")
+    print("")
+    print("")
+    print("")
+    print("")
 
 def MoveUpTop_(): #MOVE TEXT TO TOP
     print("")
@@ -220,7 +258,6 @@ def art(index): #INDEX FOR ASCII ART
 def locationArt(index): #ART FOR LOCATION
     if index == 0:
         print("""
-
                                                                    %@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                                                                    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
                                                                    @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -242,19 +279,16 @@ def locationArt(index): #ART FOR LOCATION
               :%@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-
-""")
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@""")
 def Text_(text): #PLAY ONE LINE OF TEXT
     typeSlow_(text)
     tempLine = input("")
 
 def storySetup(text, index): #SET CUTSCENE
-    ClearWindow_()
+    ClearFrame_()
     CenterMini_()
     typeSlow_(text)
     art(index)
-    CenterMini_()
 
 def typeSlow_(text): #SLOW TYPING
     text = str(text)
@@ -274,12 +308,6 @@ def flashAnim_(): #ARROW HIT ANIMATION
             print("")
         time.sleep(flash)
 
-def areaLevel_(section, index):
-    print("Level: " + level)
-    print("XP - " + xp)
-    if section in range(0,6):
-        location = 1
-    if location == 1:
-        locationName = "Granfield"
-    sectionReal = section - ((location-1) * 5)
-    print(locationName, location, "-" sectionReal, 
+
+def searchArea_(section, ):
+    pass
