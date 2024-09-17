@@ -180,7 +180,7 @@ def Center_(): #CENTER TEXT
 def BeholdAnimate(): #ANIMATE PROJECT BEHOLDER TITLE
     logo = """                                                                                                 
                                               █                                                                  
-                      █  █ █  ▒  █ █ ░░░██    █                                                                  
+                        █  █ █  ▒  █ █ ░░░██    █                                                                  
                       ███▒ █  ███  █ ███  ███ ██              ██     ░░▓█████████                                
                       █          ░█           █      ███       ██▒   ░█████████████                              
                                  █            ███    ███       ███    ██████ ███████            ██▓              
@@ -199,7 +199,7 @@ def BeholdAnimate(): #ANIMATE PROJECT BEHOLDER TITLE
                                                                                                         █        
                                                                                                  
                                                                                                  """
-    logoCenter = logo.center(20) #Center the logo.
+    logoCenter = logo.center(2000) #Center the logo.
 
     typeSlow_("Welcome to Project BEHOLDER")
     time.sleep(0.5)
@@ -292,7 +292,6 @@ def storySetup_(text, index): #SET CUTSCENE
     art(index)
 
 def typeSlow_(text): #SLOW TYPING
-    text = str(text)
     for letter in text:
         print(letter, end='')
         time.sleep(0.05)

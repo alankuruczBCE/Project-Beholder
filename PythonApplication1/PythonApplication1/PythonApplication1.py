@@ -1,24 +1,50 @@
 ﻿
 from shutil import move
 import time, windowFunction, random
+from tkinter import END
+from venv import create
+import random
 
 
 
 health = 100
 level = 1
 xp = 10
+power = 20
 location = 0
 section = 1
 location = 1
 locationName = "Test"
 selection = 0
 randomEnemy = 0
+enemyHealth = 100
+enemyPower = 10
+enemyState = "def" #USE RANDOM TO CHANGE IN BATTLE
+sectionReal = 0
+listHistory = []
+class Enemy:
+    def __init__(self, health, power, state):
+        self.health = enemyHealth
+        self.power = enemyPower
+        self.state = enemyState
+
+
+def createEnemy_():
+    Enemy1 = Enemy(enemyHealth, enemyPower, enemyState)
+
+def deleteEnemy_():
+    del Enemy
+
+def enemyStateChoose_():
+    enemyStates = ("Attack", "Defend")
+    Enemy.state = random.choice(enemyStates)
 
 def areaLevel_(): #MAIN GAMEPLAY FUNC
     global section
     global location
     global locationName
     global selection #MAKE VARIABLES GLOBAL
+    global sectionReal
 
     windowFunction.ClearFrame_()
     print("Level: " + str(level) + "            " + "XP - " + str(xp)) #PRINT STATS
@@ -62,14 +88,82 @@ def searchArea_():
     randomEnemy = random.randint(1,2)
     if randomEnemy == 1:
         print("Enemy found!")
-        xp = xp + 10
         time.sleep(1)
+        battle_()
         areaLevel_()
     else:
         print("no enemy")
         time.sleep(1)
         areaLevel_()
 
+
+def battle_():
+    global health
+    global xp
+    global enemy
+    windowFunction.ClearWindow_
+    health = 100
+    createEnemy_()
+    enemyStateChoose_()
+    if location == 1:
+        Enemy.health = 100 + (sectionReal * 4)
+        Enemy.power = 10 + (sectionReal) #SETUP ENEMY STATS
+    elif location == 2:
+        Enemy.health = 120 + (sectionReal * 6)
+        Enemy.power = 15 + (sectionReal)
+    battleKeep_()
+
+def battleKeep_():
+    global listHistory
+    global health
+    global xp
+    win = False
+    windowFunction.ClearWindow_()
+    print("Enemy Health: ", Enemy.health, "    ", "Enemy Power: ", Enemy.power)
+    playerAction = input("Choose your action to roll.\n1. Attack\n2. Defend")
+    roll = random.randint(0,6) #ROLL
+    if int(playerAction) == 1:#IF ATTACK
+        damage = 10.0
+        damageTake = 1.0
+        if roll == 1:
+            damageTake = 0 #DONT TAKE DAMAGE
+            damage = random.randint((int(0.5 * power)),int((0.7 * power)))#SET ATTACK DAMAG
+        elif roll in range(1, 5):
+            damage = random.randint(power,int(power * 1.1))
+        elif roll == 6:
+            damage = power * 1.5
+
+        listHistory.append("atk") #ADD ATTACK TO HISTORY
+    elif int(playerAction) == 2:
+        damage = 0
+        if Enemy.state == "Attack":
+            if roll == 1:
+                damageTake = 0.5 * Enemy.power
+                print("Defended", (damageTake, "damage"))
+            elif roll in range(1, 4):
+                damageTake = 0.25 * Enemy.power
+                print("Defended", (0.75 * Enemy.power), "damage")
+            elif roll == 5:
+                damageTake = 0
+                print("Defended all damage")
+            elif roll == 6:
+                health = health + (health/10)
+        elif Enemy.state == "Defend":
+            health = health + (health / 10)
+
+
+    Enemy.health = Enemy.health - damage
+    if Enemy.health <= 0:
+        win = True
+        print("Won")
+        time.wait(1)
+        areaLevel_()
+    if win == False:
+        health = health - damageTake
+        if health <= 0:
+            END
+    else:
+        battleKeep_()
 
 
 
