@@ -3,13 +3,12 @@ from shutil import move
 import time, windowFunction, random
 from tkinter import END
 from venv import create
-import random
-
+from colorama import Fore
 
 
 health = 100
-level = 1
-xp = 10
+level = 1.0
+xp = 0
 power = 20
 location = 0
 section = 1
@@ -22,22 +21,19 @@ enemyPower = 10
 enemyState = "def" #USE RANDOM TO CHANGE IN BATTLE
 sectionReal = 0
 listHistory = []
+xpNeeded = 100
+
 class Enemy:
-    def __init__(self, health, power, state):
-        self.health = enemyHealth
-        self.power = enemyPower
-        self.state = enemyState
+    def __init__(self):
+        self.health = 100
+        self.power = 20
+        self.state = "Defend"
 
 
-def createEnemy_():
-    Enemy1 = Enemy(enemyHealth, enemyPower, enemyState)
 
-def deleteEnemy_():
-    del Enemy
-
-def enemyStateChoose_():
-    enemyStates = ("Attack", "Defend")
-    Enemy.state = random.choice(enemyStates)
+    def enemyStateChoose_(self):
+        enemyStates = ("Attack", "Defend")
+        self.state = random.choice(enemyStates)
 
 def areaLevel_(): #MAIN GAMEPLAY FUNC
     global section
@@ -80,7 +76,6 @@ def areaLevel_(): #MAIN GAMEPLAY FUNC
         areaLevel_()
 
 
-
 def searchArea_():
     global randomEnemy
     global xp
@@ -99,71 +94,148 @@ def searchArea_():
 
 def battle_():
     global health
-    global xp
-    global enemy
+    global sectionReal
+    injured = 0
+    Enemy1 = Enemy()
     windowFunction.ClearWindow_
     health = 100
-    createEnemy_()
-    enemyStateChoose_()
     if location == 1:
-        Enemy.health = 100 + (sectionReal * 4)
-        Enemy.power = 10 + (sectionReal) #SETUP ENEMY STATS
+        Enemy1.health = 100 + (sectionReal * 4)
+        Enemy1.power = 10 + (sectionReal) #SETUP ENEMY STATS
     elif location == 2:
-        Enemy.health = 120 + (sectionReal * 6)
-        Enemy.power = 15 + (sectionReal)
-    battleKeep_()
+        Enemy1.health = 120 + (sectionReal * 6)
+        Enemy1.power = 15 + (sectionReal)
+    battleKeep_(Enemy1, injured)
 
-def battleKeep_():
+def battleKeep_(Enemy, injured):
     global listHistory
     global health
     global xp
+    global level
     win = False
-    windowFunction.ClearWindow_()
+    if location == 1:
+        windowFunction.art(1)
+    if location == 2:
+        windowFunction.art(2)
+    print("")
+    print("")
+    print("")
+    print("")
+    Enemy.enemyStateChoose_()
     print("Enemy Health: ", Enemy.health, "    ", "Enemy Power: ", Enemy.power)
-    playerAction = input("Choose your action to roll.\n1. Attack\n2. Defend")
-    roll = random.randint(0,6) #ROLL
+    print("")
+    print("Your Health:", health, "    ", "Your Power: ", power)
+    print("Choose your action to roll.\n1. Attack\n2. Defend")
+    playerAction = input("")
+    roll = random.randint(1,6) #ROLL
+    print("You have rolled a", roll)
+    time.sleep(1.5)
     if int(playerAction) == 1:#IF ATTACK
+        attack = 1
         damage = 10.0
-        damageTake = 1.0
-        if roll == 1:
-            damageTake = 0 #DONT TAKE DAMAGE
-            damage = random.randint((int(0.5 * power)),int((0.7 * power)))#SET ATTACK DAMAG
-        elif roll in range(1, 5):
-            damage = random.randint(power,int(power * 1.1))
-        elif roll == 6:
-            damage = power * 1.5
-
-        listHistory.append("atk") #ADD ATTACK TO HISTORY
-    elif int(playerAction) == 2:
-        damage = 0
+        damageTake = 0
         if Enemy.state == "Attack":
+            print("Enemy chooses to attack!")
+            time.sleep(1.5)
+            if roll == 1:
+                damageTake = Enemy.power * 2
+                print("You rolled a 1, so the enemy does double damage.")
+                damage = random.randint((int(0.5 * power)),int((0.7 * power)))#SET ATTACK DAMAG
+            elif roll in range(1, 5):
+                damageTake = Enemy.power
+                damage = random.randint(power,int(power * 1.1))
+            elif roll == 6:
+                damageTake = Enemy.power
+                damage = power * 1.5
+                windowFunction.typeVerySlow_("1.5x damage!")
+            print("You have dealt", damage, "damage.")
+            time.sleep(1.5)
+            print("You have lost", damageTake, "health.")
+            time.sleep(1.5)
+        if Enemy.state == "Defend":
+            print("Enemy chooses to defend!")
+            time.sleep(1)
+            windowFunction.typeSlow_("Attack damage decreased!")
+            time.sleep(1.5)
+            if roll == 1:
+                damage = 0
+                windowFunction.typeSlow_("Attack invalidated...")
+                time.sleep(1.5)
+            if roll in range(1,5):
+                damage = power * 0.5
+                windowFunction.typeSlow_("Attack damage halved...")
+                time.sleep(1.5)
+            if roll == 6:
+                damage = power
+                windowFunction.typeSlow_("You decide to push through the shielding and hit at full damage!")
+                time.sleep(1.5)
+
+
+    elif int(playerAction) == 2:
+        attack = 0
+        damage = 0
+        damageTake = 0
+        if Enemy.state == "Attack":
+            print("Enemy chooses to attack!")
+            time.sleep(1.5)
             if roll == 1:
                 damageTake = 0.5 * Enemy.power
-                print("Defended", (damageTake, "damage"))
+                print_("Defended", (damageTake, "damage"))
+                time.sleep(1.5)
             elif roll in range(1, 4):
                 damageTake = 0.25 * Enemy.power
                 print("Defended", (0.75 * Enemy.power), "damage")
+                time.sleep(1.5)
             elif roll == 5:
                 damageTake = 0
-                print("Defended all damage")
+                windowFunction.typeSlow_("Defended all damage")
+                time.sleep(1.5)
             elif roll == 6:
-                health = health + (health/10)
+                if health < 100:
+                    health = health + (int(health/10))
+                windowFunction.typeVerySlow_("You will heal 10% of your health!")
+                time.sleep(0.8)
+            listHistory.append("atk")
         elif Enemy.state == "Defend":
-            health = health + (health / 10)
+            print("Enemy chooses to defend!")
+            time.sleep(1.5)
+            if health < 100:
+                health = health + (int(health / 10))
+            windowFunction.typeSlow_("Healed 10% of HP!")
+            time.sleep(1.5)
+            listHistory.append("def")
 
-
-    Enemy.health = Enemy.health - damage
-    if Enemy.health <= 0:
-        win = True
-        print("Won")
-        time.wait(1)
-        areaLevel_()
+    if len(listHistory) == 4:
+        listHistory.pop(3)
+    if listHistory.count("atk") == 3:
+        injured = 1
+        windowFunction.typeSlow_("You have been injured! You now take 1.5x damage until the end of the battle!")
+        time.sleep(1.5)
+    if injured == 1:
+        damageTake = damageTake * 1.5
+    if attack == 1:
+        Enemy.health = Enemy.health - damage
     if win == False:
         health = health - damageTake
-        if health <= 0:
-            END
-    else:
-        battleKeep_()
+        if Enemy.health > 0:
+            battleKeep_(Enemy, injured)
+    if Enemy.health <= 0:
+        windowFunction.ClearFrame_()
+        windowFunction.typeSlow_("Battle completed!")
+        print("")
+        windowFunction.typeVerySlow_("You have earnt...")
+        xpEarnt = (Enemy.health / 4)
+        print(xpEarnt)
+        time.sleep(1.5)
+        xpNeeded = ((100**(level * 0.5)))
+        xp = xp + xpEarnt
+        while xp >= xpNeeded:
+            level = level + 1
+            xp = xp - xpNeeded
+            windowFunction.typeVerySlow_("You have levelled up!")
+            print("Level", level - 1, "to", level, "!")
+            time.sleep(3)
+        areaLevel_()
 
 
 
