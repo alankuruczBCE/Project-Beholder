@@ -350,9 +350,9 @@ def typeVerySlow_(text): #SLOW TYPING
     print("")
 
 def flashAnim_(): #ARROW HIT ANIMATION
-    flash = 0.3
+    flash = 0.2
     prints = 30
-    times = 3
+    times = 10
     for number2 in range(0, times):
         for number in range(0, prints):
             print("████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████")
