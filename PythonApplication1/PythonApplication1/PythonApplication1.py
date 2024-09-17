@@ -1,6 +1,9 @@
 ﻿
+from ast import Constant
+from pickle import APPEND
 from shutil import move
 import time, windowFunction, random
+from turtle import clear
 from tkinter import END
 from venv import create
 from colorama import Fore
@@ -9,7 +12,7 @@ from colorama import Fore
 health = 100
 level = 1.0
 xp = 0
-power = 20
+power = 35
 location = 0
 section = 1
 location = 1
@@ -22,13 +25,14 @@ enemyState = "def" #USE RANDOM TO CHANGE IN BATTLE
 sectionReal = 0
 listHistory = []
 xpNeeded = 100
-
+inventory = [["Apple", 5],["Apple", 5]]
+apple = ["Apple", 5]
 class Enemy:
     def __init__(self):
         self.health = 100
         self.power = 20
         self.state = "Defend"
-
+        self.lockbuffer = 0
 
 
     def enemyStateChoose_(self):
@@ -62,18 +66,25 @@ def areaLevel_(): #MAIN GAMEPLAY FUNC
 
     windowFunction.locationArt(index) #PRINT LOCATION ART
 
-    print("1 - Search Location \n2 - View Inventory \n3 - Progress")#PRINT OPTIONS
+    print("1 - Search Location \n2 - View Inventory \n3 - Progress \n4- Add an Apple")#PRINT OPTIONS
 
     selection = int(input("")) #SELECTION DETECTION CODE
     if selection == 1:
         searchArea_()
     elif selection == 2:
-        pass
+        inventory_()
     elif selection == 3:
         section = section + 1
         areaLevel_()
+    elif selection == 4:
+        addItem_(inventory, apple)
+        areaLevel_()
     else:
         areaLevel_()
+
+def addItem_(listicle,element):
+    listicle.append(element)
+    return 1
 
 
 def searchArea_():
@@ -105,9 +116,10 @@ def battle_():
     elif location == 2:
         Enemy1.health = 120 + (sectionReal * 6)
         Enemy1.power = 15 + (sectionReal)
-    battleKeep_(Enemy1, injured)
+    enemyBufferHp = Enemy1.health
+    battleKeep_(Enemy1, injured, enemyBufferHp)
 
-def battleKeep_(Enemy, injured):
+def battleKeep_(Enemy, injured, enemyBufferHp):
     global listHistory
     global health
     global xp
@@ -126,7 +138,11 @@ def battleKeep_(Enemy, injured):
     print("")
     print("Your Health:", health, "    ", "Your Power: ", power)
     print("Choose your action to roll.\n1. Attack\n2. Defend")
-    playerAction = input("")
+    inputAtkLoop = 0
+    while inputAtkLoop == 0:
+        playerAction = input("")
+        if playerAction == "1" or playerAction == "2":
+            inputAtkLoop = 1
     roll = random.randint(1,6) #ROLL
     print("You have rolled a", roll)
     time.sleep(1.5)
@@ -218,16 +234,18 @@ def battleKeep_(Enemy, injured):
     if win == False:
         health = health - damageTake
         if Enemy.health > 0:
-            battleKeep_(Enemy, injured)
+            battleKeep_(Enemy, injured, enemyBufferHp)
+
+
     if Enemy.health <= 0:
         windowFunction.ClearFrame_()
         windowFunction.typeSlow_("Battle completed!")
         print("")
         windowFunction.typeVerySlow_("You have earnt...")
-        xpEarnt = (Enemy.health / 4)
+        xpEarnt = (enemyBufferHp / 4)
         print(xpEarnt)
         time.sleep(1.5)
-        xpNeeded = ((100**(level * 0.5)))
+        xpNeeded = ((100**(1 + (level * 0.05))))
         xp = xp + xpEarnt
         while xp >= xpNeeded:
             level = level + 1
@@ -237,10 +255,17 @@ def battleKeep_(Enemy, injured):
             time.sleep(3)
         areaLevel_()
 
+def inventory_():
+    windowFunction.ClearFrame_()
+    for row in inventory:
+        for col in row:
+            print(col, end=" ")
+        print()
+    input("")
+    areaLevel_()
 
 
-
-areaLevel_() #INITALISE MAIN GAMEPLAY MENU
+areaLevel_()
 windowFunction.ClearFrame_()
 print("Loading", end='\r') #Print loading, do a carriage return
 time.sleep(0.3) #Pause for 0.3 seconds

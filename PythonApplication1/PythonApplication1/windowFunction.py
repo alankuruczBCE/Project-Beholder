@@ -342,11 +342,12 @@ def typeSlow_(text): #SLOW TYPING
     for letter in text:
         print(letter, end='')
         time.sleep(0.05)
-
+    print("")
 def typeVerySlow_(text): #SLOW TYPING
     for letter in text:
         print(letter, end='')
         time.sleep(0.1)
+    print("")
 
 def flashAnim_(): #ARROW HIT ANIMATION
     flash = 0.3
