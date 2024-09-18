@@ -8,7 +8,6 @@ from tkinter.font import names
 from turtle import clear
 from tkinter import END
 from venv import create
-from colorama import Fore
 
 
 health = 100

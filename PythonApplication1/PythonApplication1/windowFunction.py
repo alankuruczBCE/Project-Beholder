@@ -1,6 +1,4 @@
 ﻿import time, types
-from colorama import init, Fore, Back, Style
-#PIP INSTALL COLORAMA
 def ClearWindow_(): #CLEAR THE WHOLE WINDOW
     print("")
     time.sleep(0.02)
@@ -229,7 +227,6 @@ def CenterMini_(): #SLIGHTLY CENTER TEXT
 
 
 def art(index): #INDEX FOR ASCII ART
-    init(convert=True)
     if index == 0:
         print(R"""                                                                                                 
                       ▓░                                                                             
