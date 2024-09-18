@@ -3,6 +3,7 @@ from ast import Constant
 from pickle import APPEND
 from shutil import move
 import time, windowFunction, random
+from tkinter.font import names
 from turtle import clear
 from tkinter import END
 from venv import create
@@ -27,6 +28,25 @@ listHistory = []
 xpNeeded = 100
 inventory = [["Apple", 5],["Apple", 5]]
 apple = ["Apple", 5]
+weapons = []
+slopList = ["john pork", "skibidi", "toilet", "soy", "wojak", "baby gronk", "friend", "kris", "senan", "roblox", "homestuck", "speed", "fanum", "brainrot", "camera", "mario", "chud", "chad", "costco", "among us", "sus", "mewing", "sigma", "hawk", "tuah"]
+slopFree = 0
+class Weapon:
+    def __init__(self, index, name, damage, description, equipped):
+        self.index = index
+        self.name = name
+        self.damage = damage
+        self.description = description
+        self.equipped = equipped
+
+    def createWeapon_(index, name, damage, description, equipped):
+        global weapons
+        weapon = Weapon(index, name, damage, description, equipped)
+        weapons.append([weapon.index, weapon.name, weapon.damage, weapon.description, weapon.equipped])
+        
+
+
+
 class Enemy:
     def __init__(self):
         self.health = 100
@@ -48,6 +68,12 @@ def areaLevel_(): #MAIN GAMEPLAY FUNC
 
     windowFunction.ClearFrame_()
     print("Level: " + str(level) + "            " + "XP - " + str(xp)) #PRINT STATS
+    if section == 5:
+        section = 6
+        return
+    if section == 10:
+        section = 11
+        return
 
     if section in range(0,6): #CALCULATE SECTION
         location = 1
@@ -128,7 +154,7 @@ def battleKeep_(Enemy, injured, enemyBufferHp):
     if location == 1:
         windowFunction.art(1)
     if location == 2:
-        windowFunction.art(2)
+        windowFunction.art(1)
     print("")
     print("")
     print("")
@@ -171,19 +197,19 @@ def battleKeep_(Enemy, injured, enemyBufferHp):
         if Enemy.state == "Defend":
             print("Enemy chooses to defend!")
             time.sleep(1)
-            windowFunction.typeSlow_("Attack damage decreased!")
+            windowFunction.typeSlowbattle_("Attack damage decreased!")
             time.sleep(1.5)
             if roll == 1:
                 damage = 0
-                windowFunction.typeSlow_("Attack invalidated...")
+                windowFunction.typeSlowbattle_("Attack invalidated...")
                 time.sleep(1.5)
             if roll in range(1,5):
                 damage = power * 0.5
-                windowFunction.typeSlow_("Attack damage halved...")
+                windowFunction.typeSlowbattle_("Attack damage halved...")
                 time.sleep(1.5)
             if roll == 6:
                 damage = power
-                windowFunction.typeSlow_("You decide to push through the shielding and hit at full damage!")
+                windowFunction.typeSlowbattle_("You decide to push through the shielding and hit at full damage!")
                 time.sleep(1.5)
 
 
@@ -196,7 +222,7 @@ def battleKeep_(Enemy, injured, enemyBufferHp):
             time.sleep(1.5)
             if roll == 1:
                 damageTake = 0.5 * Enemy.power
-                print_("Defended", (damageTake, "damage"))
+                print("Defended", (damageTake, "damage"))
                 time.sleep(1.5)
             elif roll in range(1, 4):
                 damageTake = 0.25 * Enemy.power
@@ -209,7 +235,7 @@ def battleKeep_(Enemy, injured, enemyBufferHp):
             elif roll == 6:
                 if health < 100:
                     health = health + (int(health/10))
-                windowFunction.typeVerySlow_("You will heal 10% of your health!")
+                windowFunction.typeSlowbattle_("You will heal 10% of your health!")
                 time.sleep(0.8)
             listHistory.append("atk")
         elif Enemy.state == "Defend":
@@ -217,7 +243,7 @@ def battleKeep_(Enemy, injured, enemyBufferHp):
             time.sleep(1.5)
             if health < 100:
                 health = health + (int(health / 10))
-            windowFunction.typeSlow_("Healed 10% of HP!")
+            windowFunction.typeSlowbattle_("Healed 10% of HP!")
             time.sleep(1.5)
             listHistory.append("def")
 
@@ -225,7 +251,7 @@ def battleKeep_(Enemy, injured, enemyBufferHp):
         listHistory.pop(3)
     if listHistory.count("atk") == 3:
         injured = 1
-        windowFunction.typeSlow_("You have been injured! You now take 1.5x damage until the end of the battle!")
+        windowFunction.typeSlowbattle_("You have been injured! You now take 1.5x damage until the end of the battle!")
         time.sleep(1.5)
     if injured == 1:
         damageTake = damageTake * 1.5
@@ -236,36 +262,57 @@ def battleKeep_(Enemy, injured, enemyBufferHp):
         if Enemy.health > 0:
             battleKeep_(Enemy, injured, enemyBufferHp)
 
-
-    if Enemy.health <= 0:
-        windowFunction.ClearFrame_()
-        windowFunction.typeSlow_("Battle completed!")
-        print("")
-        windowFunction.typeVerySlow_("You have earnt...")
-        xpEarnt = (enemyBufferHp / 4)
-        print(xpEarnt)
-        time.sleep(1.5)
-        xpNeeded = ((100**(1 + (level * 0.05))))
-        xp = xp + xpEarnt
-        while xp >= xpNeeded:
-            level = level + 1
-            xp = xp - xpNeeded
-            windowFunction.typeVerySlow_("You have levelled up!")
-            print("Level", level - 1, "to", level, "!")
-            time.sleep(3)
-        areaLevel_()
+    if section != 5 or section != 10:
+        if Enemy.health <= 0:
+            windowFunction.ClearFrame_()
+            windowFunction.typeSlow_("Battle completed!")
+            print("")
+            windowFunction.typeVerySlow_("You have earnt...")
+            xpEarnt = (enemyBufferHp / 4)
+            print(xpEarnt)
+            time.sleep(1.5)
+            xpNeeded = ((100**(1 + (level * 0.05))))
+            xp = xp + xpEarnt
+            while xp >= xpNeeded:
+                level = level + 1
+                xp = xp - xpNeeded
+                windowFunction.typeVerySlow_("You have levelled up!")
+                print("Level", level - 1, "to", level, "!")
+                time.sleep(3)
+            areaLevel_()
 
 def inventory_():
+    count = 0
     windowFunction.ClearFrame_()
     for row in inventory:
+        count = 0
         for col in row:
-            print(col, end=" ")
+            if count == 0:
+                nameSelect = "Item:  "
+            if count == 1:
+                nameSelect = "Healing:  "
+            print(nameSelect, col, end=" ")
+            count = count + 1
         print()
-    input("")
-    areaLevel_()
+    for row in weapons:
+        count = 0
+        for col in row[0:3]:
+            if count == 0:
+                nameSelect = "index: "
+            elif count == 1:
+                nameSelect = "Name: "
+            elif count == 2:
+                nameSelect = "Damage: "
+            print(nameSelect, col, end="     ")
+            count = count + 1
+        print("")
+    selection = input("")
+    if selection == 1:
+        if weapons[0].equipped == 0:
+            weapons[0].equipped = 1
 
 
-areaLevel_()
+Weapon.createWeapon_(1, "Rusty Training Blade", 15, "It may or may not do the job. I don't think it will but it's up to you.", 0)
 windowFunction.ClearFrame_()
 print("Loading", end='\r') #Print loading, do a carriage return
 time.sleep(0.3) #Pause for 0.3 seconds
@@ -278,7 +325,16 @@ windowFunction.ClearWindow_
 
 windowFunction.BeholdAnimate()
 
-name = input("                                                       ") #NAME PROMPT
+while slopFree == 0:
+    slopLength = len(slopList)
+    name = input("                                                       ") #NAME PROMPT
+    for i in range(slopLength):
+        if slopList[i] in name.lower():
+            windowFunction.typeSlow_("Seriously? NEUROTOXINS ADMINISTERED")
+            time.sleep(1.5)
+            exit()
+        else:
+            slopFree = 1
 windowFunction.Center_() #CENTER NAME PROMPT
 windowFunction.typeSlow_("Welcome to a perilous journey. There will be challenges and triumphs. You have seen nothing as of far.") #SLOW TYPE 1 LINE
 time.sleep(1)
@@ -290,3 +346,9 @@ windowFunction.flashAnim_() #CHANGE SCENE WITH FLASHING ANIMATION
 windowFunction.Text_("Oh. What's this then... another one? Bloody hell.. they're like vermin.")
 windowFunction.Center_()
 areaLevel_() #INITALISE MAIN GAMEPLAY MENU
+windowFunction.ClearWindow_
+windowFunction.Text_("Your heavy eyes slowly begin to lift open as you peer over to your left.")
+windowFunction.Text_("A small, slightly stained envelope is sitting next to your bed, laid hastily on your bedstand.")
+windowFunction.Text_("The letter was enclosed with a bright red wax seal, which seemingly leaked into the package.\n You took a slight whiff and the stench of wax")
+windowFunction.Text_("Entered your nostrils. You begin to sit up and you begin to feel relief that the nightmare was over.\n You take another look at the envelope and see a familiar signature")
+windowFunction.typeVerySlow_("Signed - Ludvik Novak, with love")

@@ -1,6 +1,6 @@
 ﻿import time, types
 from colorama import init, Fore, Back, Style
-
+#PIP INSTALL COLORAMA
 def ClearWindow_(): #CLEAR THE WHOLE WINDOW
     print("")
     time.sleep(0.02)
@@ -277,30 +277,6 @@ def art(index): #INDEX FOR ASCII ART
 ░░░░░    ░░░░ ░░▓▓▓▒▒▒▓▒▒▒░░                                                                    
              ░░▓▒░                                                                              
              ░░░                                                                                """)
-    elif index == 2:
-        print(Fore.RED + R"""                                                                                                
-                                                                                                
-                                                                                                
-                                                                                                
-                                        ░░░░░                                                   
-                                    ░▒▓████▓░                            ░░                     
-                                   ░▓█████░░                             ▒▓▒░░░                 
-                                  ░▓█████░                          ░▒▒▒▒▒████▓░░░░             
-                                ░░▓████▒░                        ░░░▒██████████████▓▒▒░░░░░░░░░ 
-                               ░░█████░                          ▒█████████████▓░░▒▓███████████▓
-                               ▒████▒░                           ▒▓     ░▓████▓░              ▒█
-                              ▓████▒░                            ▒▓   ▒█▓░░▓█▒░               ░▒
-                            ░▓███▓░░                             ░░   ░▒░ ▒▓▒░                 ░
-                           ░▓███▒░                                    ░▒▒ ░▒▓░                  
-                          ░▓██▓░░                                      ░░   ░░░                 
-                         ▒███▒░                                                                 
-                   ░▒▓▓░▒██▓▒░                                                                  
-▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒▓▓▓▓█████▓░                                                                    
-████████████████▓▓▓██████▒░                                                                     
-█████████████░░░ ░▓███████▒                                                                     
-░░░░░    ░░░░ ░░▓▓▓▒▒▒▓▒▒▒░░                                                                    
-             ░░▓▒░                                                                              
-             ░░░                                                                                """)
 
 def locationArt(index): #ART FOR LOCATION
     if index == 0:
@@ -342,12 +318,19 @@ def typeSlow_(text): #SLOW TYPING
     for letter in text:
         print(letter, end='')
         time.sleep(0.05)
+
+
+
+def typeSlowbattle_(text): #SLOW TYPING
+    for letter in text:
+        print(letter, end='')
+        time.sleep(0.05)
     print("")
+
 def typeVerySlow_(text): #SLOW TYPING
     for letter in text:
         print(letter, end='')
         time.sleep(0.1)
-    print("")
 
 def flashAnim_(): #ARROW HIT ANIMATION
     flash = 0.2
