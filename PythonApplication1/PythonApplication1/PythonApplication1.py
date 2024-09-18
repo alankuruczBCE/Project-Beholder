@@ -1,5 +1,6 @@
 ﻿
 from ast import Constant
+from operator import eq
 from pickle import APPEND
 from shutil import move
 import time, windowFunction, random
@@ -28,25 +29,23 @@ listHistory = []
 xpNeeded = 100
 inventory = [["Apple", 5],["Apple", 5]]
 apple = ["Apple", 5]
-weapons = []
 slopList = ["john pork", "skibidi", "toilet", "soy", "wojak", "baby gronk", "friend", "kris", "senan", "roblox", "homestuck", "speed", "fanum", "brainrot", "camera", "mario", "chud", "chad", "costco", "among us", "sus", "mewing", "sigma", "hawk", "tuah"]
 slopFree = 0
 class Weapon:
-    def __init__(self, index, name, damage, description, equipped):
+    def __init__(self, index, name, damage, description, active):
         self.index = index
         self.name = name
         self.damage = damage
         self.description = description
-        self.equipped = equipped
+        self.active = active
 
-    def createWeapon_(index, name, damage, description, equipped):
-        global weapons
-        weapon = Weapon(index, name, damage, description, equipped)
-        weapons.append([weapon.index, weapon.name, weapon.damage, weapon.description, weapon.equipped])
-        
+    def summary(self):
+        print(self.index, ":", self.name, "  Damage: ", str(self.damage), "\nDescription:  ", self.description)
 
+RustyBlade = Weapon(1,"Rusty Training Blade", 15, "It may or may not do the job. I don't think it will but it's up to you.", 1)
+CrazyBlade = Weapon(2,"Scary Blade!", 30, "BOOOO!", 1)
 
-
+equipped = RustyBlade
 class Enemy:
     def __init__(self):
         self.health = 100
@@ -164,13 +163,13 @@ def battleKeep_(Enemy, injured, enemyBufferHp):
     print("")
     print("Your Health:", health, "    ", "Your Power: ", power)
     print("Choose your action to roll.\n1. Attack\n2. Defend")
-    inputAtkLoop = 0
+    inputAtkLoop = 0 #LOOP FOR THE ATTACK INPUT SYSTEM
     while inputAtkLoop == 0:
         playerAction = input("")
         if playerAction == "1" or playerAction == "2":
             inputAtkLoop = 1
     roll = random.randint(1,6) #ROLL
-    print("You have rolled a", roll)
+    print("You have rolled a", roll) #SHOWS ROLL RESULT
     time.sleep(1.5)
     if int(playerAction) == 1:#IF ATTACK
         attack = 1
@@ -182,7 +181,7 @@ def battleKeep_(Enemy, injured, enemyBufferHp):
             if roll == 1:
                 damageTake = Enemy.power * 2
                 print("You rolled a 1, so the enemy does double damage.")
-                damage = random.randint((int(0.5 * power)),int((0.7 * power)))#SET ATTACK DAMAG
+                damage = random.randint((int(0.5 * power)),int((0.7 * power)))#SET ATTACK DAMAGE
             elif roll in range(1, 5):
                 damageTake = Enemy.power
                 damage = random.randint(power,int(power * 1.1))
@@ -267,9 +266,9 @@ def battleKeep_(Enemy, injured, enemyBufferHp):
             windowFunction.ClearFrame_()
             windowFunction.typeSlow_("Battle completed!")
             print("")
-            windowFunction.typeVerySlow_("You have earnt...")
+            windowFunction.typeVerySlow_("You have earnt...\n")
             xpEarnt = (enemyBufferHp / 4)
-            print(xpEarnt)
+            print(xpEarnt, "XP!")
             time.sleep(1.5)
             xpNeeded = ((100**(1 + (level * 0.05))))
             xp = xp + xpEarnt
@@ -290,29 +289,25 @@ def inventory_():
             if count == 0:
                 nameSelect = "Item:  "
             if count == 1:
-                nameSelect = "Healing:  "
+                nameSelect = "  Healing:  "
             print(nameSelect, col, end=" ")
             count = count + 1
         print()
-    for row in weapons:
-        count = 0
-        for col in row[0:3]:
-            if count == 0:
-                nameSelect = "index: "
-            elif count == 1:
-                nameSelect = "Name: "
-            elif count == 2:
-                nameSelect = "Damage: "
-            print(nameSelect, col, end="     ")
-            count = count + 1
-        print("")
+    print()
+    if RustyBlade.active == 1:
+        if equipped == RustyBlade:
+            print("EQUIPPED")
+        RustyBlade.summary()
+        print()
+    if CrazyBlade.active == 1:
+        if equipped == CrazyBlade:
+            print("EQUIPPED")
+        CrazyBlade.summary()
+        print()
+    print("0: Return to menu")
     selection = input("")
-    if selection == 1:
-        if weapons[0].equipped == 0:
-            weapons[0].equipped = 1
-
-
-Weapon.createWeapon_(1, "Rusty Training Blade", 15, "It may or may not do the job. I don't think it will but it's up to you.", 0)
+    if selection == "0":
+        areaLevel_()
 windowFunction.ClearFrame_()
 print("Loading", end='\r') #Print loading, do a carriage return
 time.sleep(0.3) #Pause for 0.3 seconds
@@ -349,6 +344,6 @@ areaLevel_() #INITALISE MAIN GAMEPLAY MENU
 windowFunction.ClearWindow_
 windowFunction.Text_("Your heavy eyes slowly begin to lift open as you peer over to your left.")
 windowFunction.Text_("A small, slightly stained envelope is sitting next to your bed, laid hastily on your bedstand.")
-windowFunction.Text_("The letter was enclosed with a bright red wax seal, which seemingly leaked into the package.\n You took a slight whiff and the stench of wax")
+windowFunction.Text_("The letter is enclosed with a bright red wax seal, which seemingly leaked into the package.\n You tale a slight whiff and the stench of wax")
 windowFunction.Text_("Entered your nostrils. You begin to sit up and you begin to feel relief that the nightmare was over.\n You take another look at the envelope and see a familiar signature")
 windowFunction.typeVerySlow_("Signed - Ludvik Novak, with love")

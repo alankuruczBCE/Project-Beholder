@@ -317,7 +317,7 @@ def storySetup_(text, index): #SET CUTSCENE
 def typeSlow_(text): #SLOW TYPING
     for letter in text:
         print(letter, end='')
-        time.sleep(0.05)
+        time.sleep(0.035)
 
 
 
