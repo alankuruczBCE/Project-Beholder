@@ -1,9 +1,11 @@
 ﻿
 from ast import Constant
+from cgitb import text
 from operator import eq
 from pickle import APPEND
 from shutil import move
 import time, windowFunction, random
+from urllib import response
 from tkinter.font import names
 from turtle import clear
 from tkinter import END
@@ -13,7 +15,7 @@ from venv import create
 health = 100
 level = 1.0
 xp = 0
-power = 35
+power = 9999
 location = 0
 section = 1
 location = 1
@@ -28,8 +30,20 @@ listHistory = []
 xpNeeded = 100
 inventory = [["Apple", 5],["Apple", 5]]
 apple = ["Apple", 5]
-slopList = ["john pork", "skibidi", "toilet", "soy", "wojak", "baby gronk", "friend", "kris", "senan", "roblox", "homestuck", "speed", "fanum", "brainrot", "camera", "mario", "chud", "chad", "costco", "among us", "sus", "mewing", "sigma", "hawk", "tuah"]
+slopList = ["john pork", "skibidi", "toilet", "soy", "wojak", "baby gronk", "friend", "kris", "senan", "roblox", "homestuck", "speed", "fanum", "brainrot", "camera", "mario", "chud", "chad", "costco", "among us", "sus", "mewing", "sigma", "hawk", "tuah", "haircut"]
 slopFree = 0
+sectionPause = 0
+
+
+def respond_():
+    print()
+    print()
+    response = input("What do you respond with?    ")
+    print()
+    print()
+    return response
+
+
 class Weapon:
     def __init__(self, index, name, damage, description, active):
         self.index = index
@@ -41,10 +55,10 @@ class Weapon:
     def summary(self):
         print(self.index, ":", self.name, "  Damage: ", str(self.damage), "\nDescription:  ", self.description)
 
-RustyBlade = Weapon(1,"Rusty Training Blade", 15, "It may or may not do the job. I don't think it will but it's up to you.", 1)
-CrazyBlade = Weapon(2,"Scary Blade!", 30, "BOOOO!", 1)
-
+RustyBlade = Weapon(1,"Rusty Training Blade", 15, "It may or may not do the job. I don't think it will but it's up to you.", True)
+CrazyBlade = Weapon(2,"Scary Blade!", 30, "BOOOO!", False)
 equipped = RustyBlade
+power = equipped.damage
 class Enemy:
     def __init__(self):
         self.health = 100
@@ -63,15 +77,20 @@ def areaLevel_(): #MAIN GAMEPLAY FUNC
     global locationName
     global selection #MAKE VARIABLES GLOBAL
     global sectionReal
+    global sectionPause
 
     windowFunction.ClearFrame_()
     print("Level: " + str(level) + "            " + "XP - " + str(xp)) #PRINT STATS
-    if section == 5:
-        section = 6
+    if sectionPause == 1:
+        sectionPause = 0
+        section += 1
         return
-    if section == 10:
-        section = 11
-        return
+        
+
+    if section == 4:
+        sectionPause = 1
+    if section == 9:
+        sectionPause = 1
 
     if section in range(0,6): #CALCULATE SECTION
         location = 1
@@ -83,7 +102,7 @@ def areaLevel_(): #MAIN GAMEPLAY FUNC
         index = 0
     elif location == 2:
         locationName = "Granfield - Hills"
-        index = 0
+        index = 1
 
     sectionReal = section - ((location-1) * 5) #CALCULATE DISPLAY SECTION
     print(locationName, "-", str(sectionReal)) #PRINT DISPLAY SECTION
@@ -149,6 +168,7 @@ def battleKeep_(Enemy, injured, enemyBufferHp):
     global xp
     global level
     win = False
+    battleEnding = True
     if location == 1:
         windowFunction.art(1)
     if location == 2:
@@ -261,7 +281,7 @@ def battleKeep_(Enemy, injured, enemyBufferHp):
             battleKeep_(Enemy, injured, enemyBufferHp)
 
     if section != 5 or section != 10:
-        if Enemy.health <= 0:
+        if Enemy.health <= 0 and battleEnding == True:
             windowFunction.ClearFrame_()
             windowFunction.typeSlow_("Battle completed!")
             print("")
@@ -277,6 +297,7 @@ def battleKeep_(Enemy, injured, enemyBufferHp):
                 windowFunction.typeVerySlow_("You have levelled up!")
                 print("Level", level - 1, "to", level, "!")
                 time.sleep(3)
+                battleEnding = False
             areaLevel_()
 
 def inventory_():
@@ -293,20 +314,24 @@ def inventory_():
             count = count + 1
         print()
     print()
-    if RustyBlade.active == 1:
+    if RustyBlade.active == True:
         if equipped == RustyBlade:
             print("EQUIPPED")
+            power = RustyBlade.damage
         RustyBlade.summary()
         print()
-    if CrazyBlade.active == 1:
+    if CrazyBlade.active == True:
         if equipped == CrazyBlade:
             print("EQUIPPED")
+            power = CrazyBlade.damage
         CrazyBlade.summary()
         print()
     print("0: Return to menu")
     selection = input("")
     if selection == "0":
         areaLevel_()
+
+
 windowFunction.ClearFrame_()
 print("Loading", end='\r') #Print loading, do a carriage return
 time.sleep(0.3) #Pause for 0.3 seconds
@@ -333,16 +358,19 @@ windowFunction.Center_() #CENTER NAME PROMPT
 windowFunction.typeSlow_("Welcome to a perilous journey. There will be challenges and triumphs. You have seen nothing as of far.") #SLOW TYPE 1 LINE
 time.sleep(1)
 windowFunction.storySetup_("Mladav Bolen - 1654", 0) #SHOW TEXT ON TOP OF IMAGE, PRINT IMAGE BELOW
-windowFunction.Text_("you are surrounded by an air of desolateness. (ENTER to continue)")
-windowFunction.Text_("A faint rustle breaks the silence for a second.")
-windowFunction.Text_("Is it time..? I'm probably not going to come out walking but it's worth a try.")
+windowFunction.Text_("you are surrounded by an air of desolateness.\nA faint rustle breaks the silence for a second.\nIs it time..? I'm probably not going to come out walking but it's worth a try.")
 windowFunction.flashAnim_() #CHANGE SCENE WITH FLASHING ANIMATION
 windowFunction.Text_("Oh. What's this then... another one? Bloody hell.. they're like vermin.")
 windowFunction.Center_()
 areaLevel_() #INITALISE MAIN GAMEPLAY MENU
 windowFunction.ClearWindow_
-windowFunction.Text_("Your heavy eyes slowly begin to lift open as you peer over to your left.")
-windowFunction.Text_("A small, slightly stained envelope is sitting next to your bed, laid hastily on your bedstand.")
-windowFunction.Text_("The letter is enclosed with a bright red wax seal, which seemingly leaked into the package.\n You tale a slight whiff and the stench of wax")
-windowFunction.Text_("Entered your nostrils. You begin to sit up and you begin to feel relief that the nightmare was over.\n You take another look at the envelope and see a familiar signature")
+windowFunction.Text_("Your heavy eyes slowly begin to lift open as you peer over to your left.\nA small, slightly stained envelope is sitting next to your bed, laid hastily on your bedstand.\nThe letter is enclosed with a bright red wax seal, which seemingly leaked into the package.\nYou take a slight whiff and the stench of wax enters your nostrils.\nyou begin to sit up and you begin to feel relief that the nightmare was over.\nYou take another look at the envelope and see a familiar signature")
 windowFunction.typeVerySlow_("Signed - Ludvik Novak, with love")
+input()
+windowFunction.ClearFrame_()
+windowFunction.Text_("The door to your left swings straight open, and a figure stands within the doorway, clenching his arm towards his body.")
+print()
+windowFunction.Text_("It's too late.\n\nI'm sorry.\n\nWe were too late.\n\nWhat do we do.. leader?")
+respond_()
+windowFunction.Text_("Look. I may be a military manager but I don't think I can do anything. \nI don't think us with our thousands of soldiers can make a dent.\nThis is your battle.\nThe only one who can fight this fight is you. \nIt is written in The Prophecy Of The 3 Heads.\nThe only one who can truly win is the oprhan of our village..\nEveryone here knows that this is you. You need to be the man to save this world. I lend my trust to you for this, the entire city lends their trust.\nFight, not just for me, or you, but for them.\nThank you.")
+areaLevel_()
