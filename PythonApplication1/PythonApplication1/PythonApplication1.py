@@ -12,7 +12,7 @@ from tkinter import END
 from venv import create
 
 
-health = 100
+health = 50
 level = 1.0
 xp = 0
 power = 9999
@@ -33,14 +33,21 @@ apple = ["Apple", 5]
 slopList = ["john pork", "skibidi", "toilet", "soy", "wojak", "baby gronk", "friend", "kris", "senan", "roblox", "homestuck", "speed", "fanum", "brainrot", "camera", "mario", "chud", "chad", "costco", "among us", "sus", "mewing", "sigma", "hawk", "tuah", "haircut"]
 slopFree = 0
 sectionPause = 0
+tick = 0
 
 
-def respond_():
+def respond_(responseWords):
+    global tick
     print()
     print()
     response = input("What do you respond with?    ")
+    tick = 0
     print()
     print()
+    responseLength = len(responseWords)
+    for i in range(responseLength):
+        if responseWords[i] in response.lower():
+            tick = 1
     return response
 
 
@@ -55,7 +62,7 @@ class Weapon:
     def summary(self):
         print(self.index, ":", self.name, "  Damage: ", str(self.damage), "\nDescription:  ", self.description)
 
-RustyBlade = Weapon(1,"Rusty Training Blade", 15, "It may or may not do the job. I don't think it will but it's up to you.", True)
+RustyBlade = Weapon(1,"Rusty Training Blade", 9999, "It may or may not do the job. I don't think it will but it's up to you.", True)
 CrazyBlade = Weapon(2,"Scary Blade!", 30, "BOOOO!", False)
 equipped = RustyBlade
 power = equipped.damage
@@ -87,10 +94,6 @@ def areaLevel_(): #MAIN GAMEPLAY FUNC
         return
         
 
-    if section == 4:
-        sectionPause = 1
-    if section == 9:
-        sectionPause = 1
 
     if section in range(0,6): #CALCULATE SECTION
         location = 1
@@ -117,6 +120,12 @@ def areaLevel_(): #MAIN GAMEPLAY FUNC
     elif selection == 2:
         inventory_()
     elif selection == 3:
+        if section == 5:
+            sectionPause = 1
+            return
+        if section == 10:
+            sectionPause = 1
+            return
         section = section + 1
         areaLevel_()
     elif selection == 4:
@@ -152,12 +161,12 @@ def battle_():
     injured = 0
     Enemy1 = Enemy()
     windowFunction.ClearWindow_
-    health = 100
+    health = 50 + (1**(level * 0.01))
     if location == 1:
-        Enemy1.health = 100 + (sectionReal * 4)
+        Enemy1.health = 60 + (sectionReal * 4)
         Enemy1.power = 10 + (sectionReal) #SETUP ENEMY STATS
     elif location == 2:
-        Enemy1.health = 120 + (sectionReal * 6)
+        Enemy1.health = 80 + (sectionReal * 6)
         Enemy1.power = 15 + (sectionReal)
     enemyBufferHp = Enemy1.health
     battleKeep_(Enemy1, injured, enemyBufferHp)
@@ -291,13 +300,13 @@ def battleKeep_(Enemy, injured, enemyBufferHp):
             time.sleep(1.5)
             xpNeeded = ((100**(1 + (level * 0.05))))
             xp = xp + xpEarnt
+            battleEnding = False
             while xp >= xpNeeded:
                 level = level + 1
                 xp = xp - xpNeeded
                 windowFunction.typeVerySlow_("You have levelled up!")
                 print("Level", level - 1, "to", level, "!")
                 time.sleep(3)
-                battleEnding = False
             areaLevel_()
 
 def inventory_():
@@ -349,11 +358,14 @@ while slopFree == 0:
     name = input("                                                       ") #NAME PROMPT
     for i in range(slopLength):
         if slopList[i] in name.lower():
-            windowFunction.typeSlow_("Seriously? NEUROTOXINS ADMINISTERED")
-            time.sleep(1.5)
+            windowFunction.art(2)
+            windowFunction.Text_("BLOODY HELL MATE WHEEEEEEEEEEEEY!!!! COME ON FOOTY LEGENDS!!!!")
+            time.sleep(5)
             exit()
         else:
             slopFree = 1
+
+
 windowFunction.Center_() #CENTER NAME PROMPT
 windowFunction.typeSlow_("Welcome to a perilous journey. There will be challenges and triumphs. You have seen nothing as of far.") #SLOW TYPE 1 LINE
 time.sleep(1)
@@ -362,15 +374,35 @@ windowFunction.Text_("you are surrounded by an air of desolateness.\nA faint rus
 windowFunction.flashAnim_() #CHANGE SCENE WITH FLASHING ANIMATION
 windowFunction.Text_("Oh. What's this then... another one? Bloody hell.. they're like vermin.")
 windowFunction.Center_()
-areaLevel_() #INITALISE MAIN GAMEPLAY MENU
-windowFunction.ClearWindow_
+time.sleep(1.5)
+
+
+windowFunction.ClearWindow_()
+windowFunction.storySetup_("Bedroom - Section J", 3)
 windowFunction.Text_("Your heavy eyes slowly begin to lift open as you peer over to your left.\nA small, slightly stained envelope is sitting next to your bed, laid hastily on your bedstand.\nThe letter is enclosed with a bright red wax seal, which seemingly leaked into the package.\nYou take a slight whiff and the stench of wax enters your nostrils.\nyou begin to sit up and you begin to feel relief that the nightmare was over.\nYou take another look at the envelope and see a familiar signature")
 windowFunction.typeVerySlow_("Signed - Ludvik Novak, with love")
 input()
+
+
 windowFunction.ClearFrame_()
+windowFunction.storySetup_("Bedroom - Section J", 3)
 windowFunction.Text_("The door to your left swings straight open, and a figure stands within the doorway, clenching his arm towards his body.")
 print()
 windowFunction.Text_("It's too late.\n\nI'm sorry.\n\nWe were too late.\n\nWhat do we do.. leader?")
-respond_()
+respond_(["WHEEEEEEY"])
 windowFunction.Text_("Look. I may be a military manager but I don't think I can do anything. \nI don't think us with our thousands of soldiers can make a dent.\nThis is your battle.\nThe only one who can fight this fight is you. \nIt is written in The Prophecy Of The 3 Heads.\nThe only one who can truly win is the oprhan of our village..\nEveryone here knows that this is you. You need to be the man to save this world. I lend my trust to you for this, the entire city lends their trust.\nFight, not just for me, or you, but for them.\nThank you.")
-areaLevel_()
+
+
+windowFunction.ClearFrame_()
+windowFunction.storySetup_("Bedroom - Section J", 3)
+windowFunction.Text_("You stare at the letter for a bit more, and ultimately decide what must be done. Do you want to?")
+
+respond_(["yes", "ok", "okay", "sure", "alright", "yeah", "y"])
+
+if tick == 1:
+    windowFunction.Text_("Okay okay.. Here's your sword .It's very rusty but it's the best I have currently,\nNow here are some apples to eat on the way.")
+    areaLevel_()
+else:
+    windowFunction.Text_("Okay, traitor. Your father would have hoped that you could've avenged him but now I\nSee that is all for naught. It's sad to do,\n\n\n")
+    windowFunction.typeVerySlow_("But it must be done.")
+    exit
