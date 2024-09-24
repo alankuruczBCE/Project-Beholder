@@ -34,6 +34,8 @@ slopList = ["john pork", "skibidi", "toilet", "soy", "wojak", "baby gronk", "fri
 slopFree = 0
 sectionPause = 0
 tick = 0
+levelLock = 0
+amountFights = 0
 
 
 def respond_(responseWords):
@@ -62,7 +64,7 @@ class Weapon:
     def summary(self):
         print(self.index, ":", self.name, "  Damage: ", str(self.damage), "\nDescription:  ", self.description)
 
-RustyBlade = Weapon(1,"Rusty Training Blade", 9999, "It may or may not do the job. I don't think it will but it's up to you.", True)
+RustyBlade = Weapon(1,"Rusty Training Blade", 20, "It may or may not do the job. I don't think it will but it's up to you.", True)
 CrazyBlade = Weapon(2,"Scary Blade!", 30, "BOOOO!", False)
 equipped = RustyBlade
 power = equipped.damage
@@ -112,14 +114,16 @@ def areaLevel_(): #MAIN GAMEPLAY FUNC
 
     windowFunction.locationArt(index) #PRINT LOCATION ART
 
-    print("1 - Search Location \n2 - View Inventory \n3 - Progress \n4- Add an Apple")#PRINT OPTIONS
+    print("1 - Fight \n2 - View Inventory \n3 - Progress \n4- Add an Apple")#PRINT OPTIONS
 
-    selection = int(input("")) #SELECTION DETECTION CODE
-    if selection == 1:
+    selection = input("") #SELECTION DETECTION CODE
+    if selection == "1":
         searchArea_()
-    elif selection == 2:
+    elif selection == "2":
         inventory_()
-    elif selection == 3:
+    elif selection == "3":
+        amountFights = 0
+        levelLock = 0
         if section == 5:
             sectionPause = 1
             return
@@ -128,7 +132,7 @@ def areaLevel_(): #MAIN GAMEPLAY FUNC
             return
         section = section + 1
         areaLevel_()
-    elif selection == 4:
+    elif selection == "4":
         addItem_(inventory, apple)
         areaLevel_()
     else:
@@ -140,17 +144,18 @@ def addItem_(listicle,element):
 
 
 def searchArea_():
-    global randomEnemy
-    global xp
-    
-    randomEnemy = random.randint(1,2)
-    if randomEnemy == 1:
-        print("Enemy found!")
+    global levelLock
+    global amountFights
+    if amountFights > 4:
+        levelLock = 1
+    if levelLock == 0:
+        amountFights += 1
+        windowFunction.Text_("Fight Initiated! Get Ready!")
         time.sleep(1)
         battle_()
         areaLevel_()
     else:
-        print("no enemy")
+        windowFunction.Text_("No enemies left. Progress to continue.")
         time.sleep(1)
         areaLevel_()
 
@@ -224,7 +229,6 @@ def battleKeep_(Enemy, injured, enemyBufferHp):
         if Enemy.state == "Defend":
             print("Enemy chooses to defend!")
             time.sleep(1)
-            windowFunction.typeSlowbattle_("Attack damage decreased!")
             time.sleep(1.5)
             if roll == 1:
                 damage = 0
@@ -246,6 +250,7 @@ def battleKeep_(Enemy, injured, enemyBufferHp):
         damageTake = 0
         if Enemy.state == "Attack":
             print("Enemy chooses to attack!")
+            listHistory.append("atk")
             time.sleep(1.5)
             if roll == 1:
                 damageTake = 0.5 * Enemy.power
@@ -264,7 +269,6 @@ def battleKeep_(Enemy, injured, enemyBufferHp):
                     health = health + (int(health/10))
                 windowFunction.typeSlowbattle_("You will heal 10% of your health!")
                 time.sleep(0.8)
-            listHistory.append("atk")
         elif Enemy.state == "Defend":
             print("Enemy chooses to defend!")
             time.sleep(1.5)
@@ -298,7 +302,7 @@ def battleKeep_(Enemy, injured, enemyBufferHp):
             xpEarnt = (enemyBufferHp / 4)
             print(xpEarnt, "XP!")
             time.sleep(1.5)
-            xpNeeded = ((100**(1 + (level * 0.05))))
+            xpNeeded = ((50**(1 + (level * 0.05))))
             xp = xp + xpEarnt
             battleEnding = False
             while xp >= xpNeeded:
@@ -310,6 +314,7 @@ def battleKeep_(Enemy, injured, enemyBufferHp):
             areaLevel_()
 
 def inventory_():
+    exited = False
     count = 0
     windowFunction.ClearFrame_()
     for row in inventory:
@@ -336,9 +341,13 @@ def inventory_():
         CrazyBlade.summary()
         print()
     print("0: Return to menu")
-    selection = input("")
-    if selection == "0":
-        areaLevel_()
+    while exited == False:
+        selection = input("")
+        if selection == "0":
+            exited = True
+            areaLevel_()
+
+
 
 
 windowFunction.ClearFrame_()
@@ -365,7 +374,6 @@ while slopFree == 0:
         else:
             slopFree = 1
 
-
 windowFunction.Center_() #CENTER NAME PROMPT
 windowFunction.typeSlow_("Welcome to a perilous journey. There will be challenges and triumphs. You have seen nothing as of far.") #SLOW TYPE 1 LINE
 time.sleep(1)
@@ -379,7 +387,12 @@ time.sleep(1.5)
 
 windowFunction.ClearWindow_()
 windowFunction.storySetup_("Bedroom - Section J", 3)
-windowFunction.Text_("Your heavy eyes slowly begin to lift open as you peer over to your left.\nA small, slightly stained envelope is sitting next to your bed, laid hastily on your bedstand.\nThe letter is enclosed with a bright red wax seal, which seemingly leaked into the package.\nYou take a slight whiff and the stench of wax enters your nostrils.\nyou begin to sit up and you begin to feel relief that the nightmare was over.\nYou take another look at the envelope and see a familiar signature")
+windowFunction.Text_("""Your heavy eyes slowly begin to lift open as you peer over to your left.
+A small, slightly stained envelope is sitting next to your bed, laid hastily on your bedstand.
+The letter is enclosed with a bright red wax seal, which seemingly leaked into the package.
+You take a slight whiff and the stench of wax enters your nostrils.
+you begin to sit up and you begin to feel relief that the nightmare was over.
+You take another look at the envelope and see a familiar signature""")
 windowFunction.typeVerySlow_("Signed - Ludvik Novak, with love")
 input()
 
@@ -390,14 +403,21 @@ windowFunction.Text_("The door to your left swings straight open, and a figure s
 print()
 windowFunction.Text_("It's too late.\n\nI'm sorry.\n\nWe were too late.\n\nWhat do we do.. leader?")
 respond_(["WHEEEEEEY"])
-windowFunction.Text_("Look. I may be a military manager but I don't think I can do anything. \nI don't think us with our thousands of soldiers can make a dent.\nThis is your battle.\nThe only one who can fight this fight is you. \nIt is written in The Prophecy Of The 3 Heads.\nThe only one who can truly win is the oprhan of our village..\nEveryone here knows that this is you. You need to be the man to save this world. I lend my trust to you for this, the entire city lends their trust.\nFight, not just for me, or you, but for them.\nThank you.")
+windowFunction.Text_("""Look. I may be a military manager but I don't think I can do anything. 
+I don't think us with our thousands of soldiers can make a dent.
+This is your battle.\nThe only one who can fight this fight is you. 
+It is written in The Prophecy Of The 3 Heads.
+The only one who can truly win is the oprhan of our village..
+Everyone here knows that this is you. You need to be the man to save this world. I lend my trust to you for this, the entire city lends their trust.
+Fight, not just for me, or you, but for them.
+Thank you.""")
 
 
 windowFunction.ClearFrame_()
 windowFunction.storySetup_("Bedroom - Section J", 3)
 windowFunction.Text_("You stare at the letter for a bit more, and ultimately decide what must be done. Do you want to?")
 
-respond_(["yes", "ok", "okay", "sure", "alright", "yeah", "y"])
+respond_(["yes", "ok", "okay", "sure", "alright", "yeah", "y", "yea", ""])
 
 if tick == 1:
     windowFunction.Text_("Okay okay.. Here's your sword .It's very rusty but it's the best I have currently,\nNow here are some apples to eat on the way.")
@@ -406,3 +426,49 @@ else:
     windowFunction.Text_("Okay, traitor. Your father would have hoped that you could've avenged him but now I\nSee that is all for naught. It's sad to do,\n\n\n")
     windowFunction.typeVerySlow_("But it must be done.")
     exit
+
+windowFunction.storySetup_("Greene's Swamp, TOWN", 4)
+windowFunction.Text_("""You have been walking down the path for the past 2 hours.
+You are now incredibly tired and require rest.""")
+windowFunction.Text_("OI YOU, IN HERE!")
+windowFunction.Text_("""You suddenly jump from the abrupt message, and then you turn behind
+to see a portly, red man standing in your way
+THE BLOODY FOOTY'S ON MATE! GET IN!
+You hesitate for a moment but you eventually decide to cross the doorway.""")
+windowFunction.storySetup_("Barry's Metalworks", 5)
+windowFunction.Text_("""Got you, didn't I lad!
+I got your back mate.""")
+print(name)
+windowFunction.Text_("""wasn't it?
+Anyways, I know your story, and safe to say our entire village is on board.
+Essentially, you're welcome to take anythin', be it a sword or armour, or even some bloody rest.
+I know you need some of that. 
+Good luck mate, you'll need it.
+Now I'll let you just get some rest in my tavern. Night.""")
+windowFunction.storySetup_("Tavern Room C53", 6)
+windowFunction.Text_("""You think to yourself about what awaits you. The path, the fights
+and everything inbetween.
+The thoughts rush through your mind but one stays hidden.
+Will you succeed?
+
+You manage to ignore the thoughts and get some good sleep.""")
+windowFunction.storySetup_("Barry's Metalworks", 5)
+windowFunction.Text_("""You wake up and instantly travel to Barry's hidden store.
+You were told the previous night that you could take things but you would rather wait for him.
+
+NEW ALLY DISCOVERED: BARRY GOLDARMS""")
+print("VIEW INFO ABOUT ALLY? Y/N")
+exited = False
+while exited == False:
+    selection = input("")
+    if selection == "Y":
+        windowFunction.ClearWindow_()
+        windowFunction.art(7)
+        windowFunction.Text_("""BARRY GOLDARMS - MASTER BLACKSMITH - THE OLD ARMS
+        AGE: 67
+        WEIGHT: A LOT
+        BIRTHPLACE: HAMMERFIELD
+        PARENTS: JAMES SOMERTON, JANET SILVER""")
+        exited = True
+    elif selection == "N":
+        exited = True
