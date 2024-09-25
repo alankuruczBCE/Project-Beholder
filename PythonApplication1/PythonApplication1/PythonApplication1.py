@@ -38,11 +38,11 @@ levelLock = 0
 amountFights = 0
 
 
-def respond_(responseWords):
+def respond_(responseWords, responseText = "What do you respond with?    "):
     global tick
     print()
     print()
-    response = input("What do you respond with?    ")
+    response = input(responseText)
     tick = 0
     print()
     print()
@@ -65,7 +65,7 @@ class Weapon:
         print(self.index, ":", self.name, "  Damage: ", str(self.damage), "\nDescription:  ", self.description)
 
 RustyBlade = Weapon(1,"Rusty Training Blade", 20, "It may or may not do the job. I don't think it will but it's up to you.", True)
-CrazyBlade = Weapon(2,"Scary Blade!", 30, "BOOOO!", False)
+CrazyBlade = Weapon(2,"Basic Basher", 40, "A basic sword. It works somewhat well", False)
 equipped = RustyBlade
 power = equipped.damage
 class Enemy:
@@ -314,6 +314,7 @@ def battleKeep_(Enemy, injured, enemyBufferHp):
             areaLevel_()
 
 def inventory_():
+    global equipped
     exited = False
     count = 0
     windowFunction.ClearFrame_()
@@ -340,14 +341,37 @@ def inventory_():
             power = CrazyBlade.damage
         CrazyBlade.summary()
         print()
-    print("0: Return to menu")
+    print("0: Return to menu", end='r')
+    if RustyBlade.active == True:
+        print("1: Equip Rusty Blade", end='r')
+    if CrazyBlade.active == True:
+        print("2: Equip Crazy Blade", end='r')
     while exited == False:
         selection = input("")
         if selection == "0":
             exited = True
             areaLevel_()
+        elif selection == "1":
+            if RustyBlade.active == True:
+                equipped = RustyBlade
+                inventory_()
+        elif selection == "2":
+            if CrazyBlade.active == True:
+                equipped = CrazyBlade
+                inventory_()
 
 
+def infoView_(name, job, location, age, weight, birthplace, parent1, parent2):
+    exited = False
+    while exited == False:
+        selection = input("")
+        if selection == "Y":
+            windowFunction.ClearWindow_()
+            windowFunction.art(7)
+            print(name.upper(), "-", job.upper(), "-", location.upper(), "\n", "AGE:", age.upper(), "\n", "WEIGHT:", weight.upper(), "\n", "BIRTHPLACE:", birthplace.upper(), "\n", "PARENTS:", parent1.upper() + ",", parent2.upper()) 
+            exited = True
+        elif selection == "N":
+            exited = True
 
 
 windowFunction.ClearFrame_()
@@ -415,9 +439,9 @@ Thank you.""")
 
 windowFunction.ClearFrame_()
 windowFunction.storySetup_("Bedroom - Section J", 3)
-windowFunction.Text_("You stare at the letter for a bit more, and ultimately decide what must be done. Do you want to?")
+windowFunction.Text_("You stare at the letter for a bit more, and ultimately decide what must be done.")
 
-respond_(["yes", "ok", "okay", "sure", "alright", "yeah", "y", "yea", ""])
+respond_(["yes", "ok", "okay", "sure", "alright", "yeah", "y", "yea", ""], "Do you want to journey forward?    ")
 
 if tick == 1:
     windowFunction.Text_("Okay okay.. Here's your sword .It's very rusty but it's the best I have currently,\nNow here are some apples to eat on the way.")
@@ -458,17 +482,14 @@ You were told the previous night that you could take things but you would rather
 
 NEW ALLY DISCOVERED: BARRY GOLDARMS""")
 print("VIEW INFO ABOUT ALLY? Y/N")
-exited = False
-while exited == False:
-    selection = input("")
-    if selection == "Y":
-        windowFunction.ClearWindow_()
-        windowFunction.art(7)
-        windowFunction.Text_("""BARRY GOLDARMS - MASTER BLACKSMITH - THE OLD ARMS
-        AGE: 67
-        WEIGHT: A LOT
-        BIRTHPLACE: HAMMERFIELD
-        PARENTS: JAMES SOMERTON, JANET SILVER""")
-        exited = True
-    elif selection == "N":
-        exited = True
+infoView_("barry goldarms", "master blacksmith", "the old arms", "67", "a lot", "hammerfield", "james somerton", "janet silver")
+
+windowFunction.storySetup_("Barry's Metalworks", 5)
+windowFunction.Text_("Oi lad, why 'aven't ya grabbed anythin'?\nI'll just pick out the lightest one in me collection.\nHere, a basic, light blade that's suitable for you")
+windowFunction.Text_("SWORD OBTAINED!")
+print("SWORD NAME:", CrazyBlade.name)
+CrazyBlade.active = True
+respond_(["yes", "ok", "okay", "sure", "alright", "yeah", "y", "yea", ""], "Would you like to equip this sword?   ")
+if tick == 1:
+    equipped = CrazyBlade
+    windowFunction.Text_("Sword now equipped")
