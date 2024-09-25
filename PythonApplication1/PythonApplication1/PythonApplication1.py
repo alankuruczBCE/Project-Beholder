@@ -110,7 +110,11 @@ def areaLevel_(): #MAIN GAMEPLAY FUNC
 
     windowFunction.locationArt(index) #PRINT LOCATION ART
 
-    print("1 - Fight \n2 - View Inventory \n3 - Progress \n4- Add an Apple")#PRINT OPTIONS
+    
+    if level - 1 >= section:
+        print("1 - Fight \n2 - View Inventory \n3 - Progress \n4- Add an Apple")#PRINT OPTIONS
+    else:
+        print("1 - Fight \n2 - View Inventory \n3 - (NEED TO LEVEL UP TO PROGRESS) \n4- Add an Apple")#PRINT OPTIONS
 
     selection = input("") #SELECTION DETECTION CODE
     if selection == "1":
@@ -126,7 +130,8 @@ def areaLevel_(): #MAIN GAMEPLAY FUNC
         if section == 10:
             section = section + 1
             return
-        section = section + 1
+        if level - 1 >= section:
+            section = section + 1
         areaLevel_()
     elif selection == "4":
         addItem_(inventory, apple)
@@ -146,12 +151,12 @@ def searchArea_():
         levelLock = 1
     if levelLock == 0:
         amountFights += 1
-        windowFunction.Text_("Fight Initiated! Get Ready!")
+        windowFunction.typeSlow_("Fight Initiated! Get Ready!")
         time.sleep(1)
         battle_()
         areaLevel_()
     else:
-        windowFunction.Text_("No enemies left. Progress to continue.")
+        windowFunction.typeSlow_("No enemies left. Progress to continue.")
         time.sleep(1)
         areaLevel_()
 
@@ -297,7 +302,7 @@ def battleKeep_(Enemy, injured, enemyBufferHp):
             windowFunction.typeSlow_("Battle completed!")
             print("")
             windowFunction.typeVerySlow_("You have earnt...\n")
-            xpEarnt = (enemyBufferHp / 4)
+            xpEarnt = (enemyBufferHp / random.randint(3,5))
             print(xpEarnt, "XP!")
             time.sleep(1.5)
             xpNeeded = ((50**(1 + (level * 0.05))))
@@ -308,6 +313,7 @@ def battleKeep_(Enemy, injured, enemyBufferHp):
                 xp = xp - xpNeeded
                 windowFunction.typeVerySlow_("You have levelled up!")
                 print("Level", level - 1, "to", level, "!")
+                xp = round(xp)
                 time.sleep(3)
             areaLevel_()
 
@@ -372,7 +378,6 @@ def infoView_(name, job, location, age, weight, birthplace, parent1, parent2):
         elif selection == "N":
             exited = True
 
-
 windowFunction.ClearFrame_()
 print("Loading", end='\r') #Print loading, do a carriage return
 time.sleep(0.3) #Pause for 0.3 seconds
@@ -384,6 +389,7 @@ print("Loading...")
 windowFunction.ClearWindow_
 windowFunction.BeholdAnimate()
 
+areaLevel_()
 while slopFree == 0:
     slopLength = len(slopList)
     name = input("                                                       ") #NAME PROMPT
@@ -403,8 +409,6 @@ windowFunction.storySetup_("Mladav Bolen - 1654", 0) #SHOW TEXT ON TOP OF IMAGE,
 windowFunction.Text_("you are surrounded by an air of desolateness.\nA faint rustle breaks the silence for a second.\nIs it time..? I'm probably not going to come out walking but it's worth a try.")
 windowFunction.flashAnim_() #CHANGE SCENE WITH FLASHING ANIMATION
 windowFunction.Text_("Oh. What's this then... another one? Bloody hell.. they're like vermin.")
-windowFunction.Center_()
-time.sleep(1.5)
 
 
 windowFunction.ClearWindow_()
@@ -442,7 +446,7 @@ windowFunction.Text_("You stare at the letter for a bit more, and ultimately dec
 respond_(["yes", "ok", "okay", "sure", "alright", "yeah", "y", "yea", ""], "Do you want to journey forward?    ")
 
 if tick == 1:
-    windowFunction.Text_("Okay okay.. Here's your sword .It's very rusty but it's the best I have currently,\nNow here are some apples to eat on the way.")
+    windowFunction.Text_("Okay okay.. Here's your swordIt's very rusty but it's the best I have currently,\nNow here are some apples to eat on the way.")
     areaLevel_()
 else:
     windowFunction.Text_("Okay, traitor. Your father would have hoped that you could've avenged him but now I\nSee that is all for naught. It's sad to do,\n\n\n")
@@ -481,7 +485,6 @@ You were told the previous night that you could take things but you would rather
 NEW ALLY DISCOVERED: BARRY GOLDARMS""")
 print("VIEW INFO ABOUT ALLY? Y/N")
 infoView_("barry goldarms", "master blacksmith", "the old arms", "67", "a lot", "hammerfield", "james somerton", "janet silver")
-
 windowFunction.storySetup_("Barry's Metalworks", 5)
 windowFunction.Text_("Oi lad, why 'aven't ya grabbed anythin'?\nI'll just pick out the lightest one in me collection.\nHere, a basic, light blade that's suitable for you")
 windowFunction.Text_("SWORD OBTAINED!")
