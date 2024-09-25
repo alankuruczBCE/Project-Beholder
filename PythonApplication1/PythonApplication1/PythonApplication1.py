@@ -90,10 +90,6 @@ def areaLevel_(): #MAIN GAMEPLAY FUNC
 
     windowFunction.ClearFrame_()
     print("Level: " + str(level) + "            " + "XP - " + str(xp)) #PRINT STATS
-    if sectionPause == 1:
-        sectionPause = 0
-        section += 1
-        return
         
 
 
@@ -125,10 +121,10 @@ def areaLevel_(): #MAIN GAMEPLAY FUNC
         amountFights = 0
         levelLock = 0
         if section == 5:
-            sectionPause = 1
+            section = section + 1
             return
         if section == 10:
-            sectionPause = 1
+            section = section + 1
             return
         section = section + 1
         areaLevel_()
@@ -175,12 +171,14 @@ def battle_():
         Enemy1.power = 15 + (sectionReal)
     enemyBufferHp = Enemy1.health
     battleKeep_(Enemy1, injured, enemyBufferHp)
+    power = equipped.damage
 
 def battleKeep_(Enemy, injured, enemyBufferHp):
     global listHistory
     global health
     global xp
     global level
+    power = equipped.damage
     win = False
     battleEnding = True
     if location == 1:
@@ -341,11 +339,11 @@ def inventory_():
             power = CrazyBlade.damage
         CrazyBlade.summary()
         print()
-    print("0: Return to menu  ", end='\r')
+    print("0: Return to menu  ")
     if RustyBlade.active == True:
-        print("1: Equip Rusty Blade  ", end='\r')
+        print("1: Equip Rusty Blade  ")
     if CrazyBlade.active == True:
-        print("2: Equip Crazy Blade  ", end='\r')
+        print("2: Equip Crazy Blade  ")
     while exited == False:
         selection = input("")
         if selection == "0":
@@ -370,6 +368,7 @@ def infoView_(name, job, location, age, weight, birthplace, parent1, parent2):
             windowFunction.art(7)
             print(name.upper(), "-", job.upper(), "-", location.upper(), "\n", "AGE:", age.upper(), "\n", "WEIGHT:", weight.upper(), "\n", "BIRTHPLACE:", birthplace.upper(), "\n", "PARENTS:", parent1.upper() + ",", parent2.upper()) 
             exited = True
+            input("")
         elif selection == "N":
             exited = True
 
@@ -383,7 +382,6 @@ print("Loading..", end='\r')
 time.sleep(0.3)
 print("Loading...")
 windowFunction.ClearWindow_
-
 windowFunction.BeholdAnimate()
 
 while slopFree == 0:
