@@ -341,11 +341,11 @@ def inventory_():
             power = CrazyBlade.damage
         CrazyBlade.summary()
         print()
-    print("0: Return to menu", end='\r')
+    print("0: Return to menu  ", end='\r')
     if RustyBlade.active == True:
-        print("1: Equip Rusty Blade", end='\r')
+        print("1: Equip Rusty Blade  ", end='\r')
     if CrazyBlade.active == True:
-        print("2: Equip Crazy Blade", end='\r')
+        print("2: Equip Crazy Blade  ", end='\r')
     while exited == False:
         selection = input("")
         if selection == "0":
