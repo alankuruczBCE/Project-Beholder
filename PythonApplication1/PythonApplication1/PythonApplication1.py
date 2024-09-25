@@ -64,7 +64,7 @@ class Weapon:
     def summary(self):
         print(self.index, ":", self.name, "  Damage: ", str(self.damage), "\nDescription:  ", self.description)
 
-RustyBlade = Weapon(1,"Rusty Training Blade", 20, "It may or may not do the job. I don't think it will but it's up to you.", True)
+RustyBlade = Weapon(1,"Rusty Training Blade", 2000000, "It may or may not do the job. I don't think it will but it's up to you.", True)
 CrazyBlade = Weapon(2,"Basic Basher", 40, "A basic sword. It works somewhat well", False)
 equipped = RustyBlade
 power = equipped.damage
@@ -87,9 +87,10 @@ def areaLevel_(): #MAIN GAMEPLAY FUNC
     global selection #MAKE VARIABLES GLOBAL
     global sectionReal
     global sectionPause
+    xpNeeded = ((50**(1 + (level * 0.05))))
 
     windowFunction.ClearFrame_()
-    print("Level: " + str(level) + "            " + "XP - " + str(xp)) #PRINT STATS
+    print("Level: " + str(level) + "            " + "XP - " + str(xp) + "             " + "XP until level", str(int(level) + 1) + " -", str(round(xpNeeded) - xp)) #PRINT STATS
         
 
 
@@ -147,7 +148,7 @@ def addItem_(listicle,element):
 def searchArea_():
     global levelLock
     global amountFights
-    if amountFights > 4:
+    if amountFights > 9:
         levelLock = 1
     if levelLock == 0:
         amountFights += 1
@@ -302,11 +303,11 @@ def battleKeep_(Enemy, injured, enemyBufferHp):
             windowFunction.typeSlow_("Battle completed!")
             print("")
             windowFunction.typeVerySlow_("You have earnt...\n")
-            xpEarnt = (enemyBufferHp / random.randint(3,5))
+            xpEarnt = round(enemyBufferHp / random.randint(2,6))
             print(xpEarnt, "XP!")
             time.sleep(1.5)
             xpNeeded = ((50**(1 + (level * 0.05))))
-            xp = xp + xpEarnt
+            xp = xp + round(xpEarnt)
             battleEnding = False
             while xp >= xpNeeded:
                 level = level + 1
@@ -389,7 +390,6 @@ print("Loading...")
 windowFunction.ClearWindow_
 windowFunction.BeholdAnimate()
 
-areaLevel_()
 while slopFree == 0:
     slopLength = len(slopList)
     name = input("                                                       ") #NAME PROMPT
