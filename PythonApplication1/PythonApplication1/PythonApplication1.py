@@ -221,9 +221,10 @@ def battleKeep_(Enemy, injured, enemyBufferHp):
     roll = random.randint(1,6) #ROLL
     print("You have rolled a", roll) #SHOWS ROLL RESULT
     time.sleep(1.5)
+
     if int(playerAction) == 1:#IF ATTACK
         attack = 1
-        damage = 10.0
+        damage = 0
         damageTake = 0
         if Enemy.state == "Attack":
             print("Enemy chooses to attack!")
@@ -264,7 +265,7 @@ def battleKeep_(Enemy, injured, enemyBufferHp):
                 time.sleep(1.5)
 
 
-    elif int(playerAction) == 2:
+    elif int(playerAction) == 2: #  
         attack = 0
         damage = 0
         damageTake = 0
@@ -290,6 +291,8 @@ def battleKeep_(Enemy, injured, enemyBufferHp):
                 windowFunction.typeSlowbattle_(
                     "You will heal 10% of your health!")
                 time.sleep(0.8)
+
+
         elif Enemy.state == "Defend":
             print("Enemy chooses to defend!")
             time.sleep(1.5)
@@ -299,15 +302,6 @@ def battleKeep_(Enemy, injured, enemyBufferHp):
             time.sleep(1.5)
             listHistory.append("def")
 
-    if len(listHistory) == 4:
-        listHistory.pop(3)
-    if listHistory.count("atk") == 3:
-        injured = 1
-        windowFunction.typeSlowbattle_("You have been injured!"
-        " You now take 1.5x damage until the end of the battle!")
-        time.sleep(1.5)
-    if injured == 1:
-        damageTake = damageTake * 1.5
     if attack == 1:
         Enemy.health = Enemy.health - damage
     if win == False:
@@ -315,7 +309,7 @@ def battleKeep_(Enemy, injured, enemyBufferHp):
         if Enemy.health > 0:
             battleKeep_(Enemy, injured, enemyBufferHp)
 
-    if section != 5 or section != 10:
+    if section != 5 or section != 10 or section != 15 or section != 20 or section != 25:
         if Enemy.health <= 0 and battleEnding == True:
             windowFunction.ClearFrame_()
             windowFunction.typeSlow_("Battle completed!")
@@ -352,6 +346,7 @@ def inventory_():
             count = count + 1
         print()
     print()
+
     if RustyBlade.active == True:
         if equipped == RustyBlade:
             print("EQUIPPED")
