@@ -25,14 +25,19 @@ slopList = ["john pork", "skibidi", "toilet", "soy", "wojak", "baby gronk"
             "fanum", "brainrot", "camera", "mario", "chud", "chad", 
             "costco", "among us", "sus", "mewing", "sigma", "hawk", 
             "tuah", "haircut"]#LIST TO STOP ENTRY OF BRAINROT NAMES
+codeList = ["LEVELOFF", "NOGAME", "FASTSPEED"]
 slopFree = 0
 sectionPause = 0
 tick = 0
 levelLock = 0
 amountFights = 0
+#-------------------------------PARAMETERS-----------------------------------¦
+level_requirement = 1
+area_enabled = 1
+
 
 # FUNCTION DECLARATIONS
-def respond_(responseWords = "test", responseText = "What do you respond" 
+def respond_(responseWords = "test", responseText = "What do you respond " 
              "with?    "):
     global tick
     print()
@@ -86,62 +91,66 @@ def areaLevel_(): #MAIN GAMEPLAY FUNC
     global selection #MAKE VARIABLES GLOBAL
     global sectionReal
     global sectionPause
-    xpNeeded = ((50**(1 + (level * 0.05))))
+    global area_enabled
+    if area_enabled == 1:
+        xpNeeded = ((50**(1 + (level * 0.05))))
 
-    windowFunction.ClearFrame_()
-    print("Level: " + str(level) + "            " + "XP - " + str(xp) + 
-          "             " + "XP until level", str(int(level) + 1)
-         + " -", str(round(xpNeeded) - xp)) #PRINT STATS
+        windowFunction.ClearFrame_()
+        print("Level: " + str(level) + "            " + "XP - " + str(xp) + 
+              "             " + "XP until level", str(int(level) + 1)
+             + " -", str(round(xpNeeded) - xp)) #PRINT STATS
         
 
-    if section in range(0,6): #CALCULATE SECTION
-        location = 1
-    elif section in range(6, 11):
-        location = 2
+        if section in range(0,6): #CALCULATE SECTION
+            location = 1
+        elif section in range(6, 11):
+            location = 2
 
-    if location == 1: #FIND LOCATION NAME, SELECT INDEX FOR PRINTING
-        locationName = "Granfield"
-        index = 0
-    elif location == 2:
-        locationName = "Granfield - Hills"
-        index = 1
+        if location == 1: #FIND LOCATION NAME, SELECT INDEX FOR PRINTING
+            locationName = "Granfield"
+            index = 0
+        elif location == 2:
+            locationName = "Granfield - Hills"
+            index = 1
+        elif location == 3:
+            locationNmae = "Vesenid"
 
-    sectionReal = section - ((location-1) * 5) #CALCULATE DISPLAY SECTION
-    print(locationName, "-", str(sectionReal)) #PRINT DISPLAY SECTION
+        sectionReal = section - ((location-1) * 5) #CALCULATE DISPLAY SECTION
+        print(locationName, "-", str(sectionReal)) #PRINT DISPLAY SECTION
 
-    windowFunction.locationArt(index) #PRINT LOCATION ART
+        windowFunction.locationArt(index) #PRINT LOCATION ART
 
     
-    if level - 1 >= section:
-        print("1 - Fight \n2 - View Inventory \n3 - Progress \n"
-              "4- Add an Apple")#PRINT OPTIONS
-    else:
-        print("1 - Fight \n2 - View Inventory \n3 - "
-              "(NEED TO LEVEL UP TO PROGRESS) \n4- Add an Apple")
-                #PRINT OPTIONS
+        if level - 1 >= section or level_requirement == 0:
+            print("1 - Fight \n2 - View Inventory \n3 - Progress \n"
+                  "4- Add an Apple")#PRINT OPTIONS
+        else:
+            print("1 - Fight \n2 - View Inventory \n3 - "
+                  "(NEED TO LEVEL UP TO PROGRESS) \n4- Add an Apple")
+                    #PRINT OPTIONS
 
-    selection = input("") #SELECTION DETECTION CODE
-    if selection == "1":
-        searchArea_()
-    elif selection == "2":
-        inventory_()
-    elif selection == "3":
-        amountFights = 0
-        levelLock = 0
-        if section == 5:
-            section = section + 1
-            return
-        if section == 10:
-            section = section + 1
-            return
-        if level - 1 >= section:
-            section = section + 1
-        areaLevel_()
-    elif selection == "4":
-        addItem_(inventory, apple)
-        areaLevel_()
+        selection = input("") #SELECTION DETECTION CODE
+        if selection == "1":
+            searchArea_()
+        elif selection == "2":
+            inventory_()
+        elif selection == "3":
+            amountFights = 0
+            levelLock = 0
+            if section == 5 or section == 10 or section == 15\
+               or section == 20 or section == 25:
+                section = section + 1
+                return
+            if level - 1 >= section:
+                section = section + 1
+            areaLevel_()
+        elif selection == "4":
+            addItem_(inventory, apple)
+            areaLevel_()
+        else:
+            areaLevel_()
     else:
-        areaLevel_()
+        pass
 
 def addItem_(listicle,element):
     listicle.append(element)
@@ -406,6 +415,7 @@ windowFunction.BeholdAnimate()
 
 while slopFree == 0:
     slopLength = len(slopList)
+    codeLen = len(codeList)
     name = input("                                  "
                  "                     ") #NAME PROMPT
     for i in range(slopLength):
@@ -415,6 +425,13 @@ while slopFree == 0:
                                  "COME ON FOOTY LEGENDS!!!!")
             time.sleep(5)
             exit()
+    for i in range(codeLen):
+        if codeList[i] == "LEVELOFF":
+            level_requirement = 0
+            slopFree = 1
+        if codeList[i] == "NOGAME":
+            area_enabled = 0
+            slopFree = 1
         else:
             slopFree = 1
 
@@ -442,7 +459,10 @@ A small, slightly stained envelope is sitting next to your bed, laid hastily on 
 The letter is enclosed with a bright red wax seal, which seemingly leaked into the package.
 You take a slight whiff and the stench of wax enters your nostrils.
 you begin to sit up and you begin to feel relief that the nightmare was over.
-You take another look at the envelope and see a familiar signature""")#USES RAW STRING
+You take another look at the envelope and see a familiar signature""")#USES RAW STRING, WARNING
+
+#WARNING //------------------------------- RAW STRINGS IN THIS IGNORE PEP8 CHARACTER LIMIT FOR CONVENIENCE ---------------------------------//
+
 windowFunction.typeVerySlow_("Signed - Ludvik Novak, with love")
 input()
 
@@ -500,7 +520,7 @@ print(name)
 windowFunction.Text_("""wasn't it?
 Anyways, I know your story, and safe to say our entire village is on board.
 Essentially, you're welcome to take anythin', be it a sword or armour, or even some bloody rest.
-I know you need some of that. 
+I know you need some. 
 Good luck mate, you'll need it.
 Now I'll let you just get some rest in my tavern. Night.""")
 windowFunction.storySetup_("Tavern Room C53", 6)
@@ -531,3 +551,23 @@ if tick == 1:
     equipped = CrazyBlade
     windowFunction.Text_("Sword now equipped")
 areaLevel_()
+windowFunction.storySetup_("Barry's Metalworks", 5)
+windowFunction.Text_("""So, lad, how's it look? Nice, eh?
+Give it a swing or two, see how it feels.
+
+Alright. I've kept you 'ere long enough, lad. You better be off on your journey.""")
+windowFunction.storySetup_("Forest Path", 8)
+windowFunction.Text_("""After walking for miles, 
+You decide to think about how life has brought you here.
+From stumbling out of your bad and reading a letter to walking down a path of revenge.
+You watched as the clouds slowly drifted and pulled out your newly obtained blade.
+Feeling the shiny, primed metal on the surface, you began to reminisce about all of the
+times you saw soldiers heaving giant swords as a child, and your wish of being able to wield
+one of those swords.
+It's almost cathartic sitting here, looking at the trees. Seeing the leaves sway.
+Seeing the grass follow the wind.
+
+You decide to get up and leave, facing the journey ahead of you.
+You detect a slight hint of a smoky smell and you turn to your left.
+
+a small, bearded man""")
