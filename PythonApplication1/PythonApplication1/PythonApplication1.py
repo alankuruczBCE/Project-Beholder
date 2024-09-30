@@ -20,6 +20,7 @@ listHistory = []
 xpNeeded = 100
 inventory = [["Apple", 5],["Apple", 5]]
 apple = ["Apple", 5]
+HeartyStew = ["Mysterious Stew", -99999]
 slopList = ["john pork", "skibidi", "toilet", "soy", "wojak", "baby gronk"
             , "friend", "kris", "senan", "roblox", "homestuck", "speed", 
             "fanum", "brainrot", "camera", "mario", "chud", "chad", 
@@ -31,6 +32,7 @@ sectionPause = 0
 tick = 0
 levelLock = 0
 amountFights = 0
+selfPower = 5
 #-------------------------------PARAMETERS-----------------------------------¦
 level_requirement = 1
 area_enabled = 1
@@ -65,7 +67,7 @@ class Weapon:
         print(self.index, ":", self.name, "  Damage: ", str(self.damage), 
               "\nDescription:  ", self.description)
 
-RustyBlade = Weapon(1,"Rusty Training Blade", 2000000, 
+RustyBlade = Weapon(1,"Rusty Training Blade", 20, 
 "It may or may not do the job. "
 "I don't think it will but it's up to you.", True)
 CrazyBlade = Weapon(2,"Basic Basher", 40, "A basic sword. "
@@ -196,7 +198,7 @@ def battleKeep_(Enemy, injured, enemyBufferHp):
     global health
     global xp
     global level
-    power = equipped.damage
+    power = equipped.damage + selfPower
     win = False
     battleEnding = True
     if location == 1:
@@ -261,7 +263,7 @@ def battleKeep_(Enemy, injured, enemyBufferHp):
             if roll == 6:
                 damage = power
                 windowFunction.typeSlowbattle_("You decide to push through" 
-                "the shielding and hit at full damage!")
+                " the shielding and hit at full damage!")
                 time.sleep(1.5)
 
 
@@ -324,8 +326,9 @@ def battleKeep_(Enemy, injured, enemyBufferHp):
             while xp >= xpNeeded:
                 level = level + 1
                 xp = xp - xpNeeded
-                windowFunction.typeVerySlow_("You have levelled up!")
+                windowFunction.typeVerySlow_("You have levelled up!           ")
                 print("Level", level - 1, "to", level, "!")
+                selfPower += 3
                 xp = round(xp)
                 time.sleep(3)
             areaLevel_()
@@ -429,8 +432,34 @@ while slopFree == 0:
             slopFree = 1
         else:
             slopFree = 1
-
+            area_enabled = 1
+            level_requirement = 1
 windowFunction.Center_() #CENTER NAME PROMPT
+exited = False
+while exited == False:
+    windowFunction.typeSlow_("""Select your text speed.
+    1. Slow
+    2. Normal
+    3. Fast (the intended speed)
+    """)
+    textSpeed = input()
+    if textSpeed == "1":
+        windowFunction.textSpeed1 = 0.07
+        windowFunction.textSpeedSlow = 0.2
+        windowFunction.textSpeedVerySlow = 0.4
+        exited = True
+    elif textSpeed == "2":
+        windowFunction.textSpeed1 = 0.035
+        windowFunction.textSpeedSlow = 0.15
+        windowFunction.textSpeedVerySlow = 0.25
+        exited = True
+    elif textSpeed == "3":
+        windowFunction.textSpeed1 = 0.0235
+        windowFunction.textSpeedSlow = 0.06
+        windowFunction.textSpeedVerySlow = 0.15
+        exited = True
+    else:
+        windowFunction.ClearFrame_()
 windowFunction.typeSlow_("Welcome to a perilous journey. "
                          "There will be challenges and triumphs. "
                          "You have seen nothing as of far.") #SLOW TYPE 1 LINE
@@ -450,8 +479,17 @@ windowFunction.Text_("Oh. What's this then... another one? "
 windowFunction.ClearWindow_()#CLEARS WINDOW FULLY
 windowFunction.storySetup_("Bedroom - Section J", 3)
 windowFunction.Text_("""Your heavy eyes slowly begin to lift open as you peer over to your left.
-A small, slightly stained envelope is sitting next to your bed, laid hastily on your bedstand.
-The letter is enclosed with a bright red wax seal, which seemingly leaked into the package.
+A small, slightly stained envelope is sitting next to your bed, laid hastily on your bedstand.""")
+respond_(["yes", "ok", "okay", "sure", "alright", "yeah", "y", "yea", ""], "The envelope entices you. Do you consume the envelope?   ")
+if tick == 1:
+    windowFunction.Text_("""Your life goes on as normal. You wake up, eat a meal, and drink some alcohol.
+You pick up a small bottle of alcohest and realise that there is a rat dissolved in your drink. 
+You decide to drink anyway and you fall asleep.
+Your eyes slowly open and a bright flash of fire suddenly appears.
+Your life is now over.""")
+    input("Enter to exit game.")
+    exit()
+("""The letter is enclosed with a bright red wax seal, which seemingly leaked into the package.
 You take a slight whiff and the stench of wax enters your nostrils.
 you begin to sit up and you begin to feel relief that the nightmare was over.
 You take another look at the envelope and see a familiar signature""")#USES RAW STRING, WARNING
@@ -545,6 +583,8 @@ respond_(["yes", "ok", "okay", "sure", "alright", "yeah", "y", "yea", ""]
 if tick == 1:
     equipped = CrazyBlade
     windowFunction.Text_("Sword now equipped")
+
+
 areaLevel_()
 windowFunction.storySetup_("Barry's Metalworks", 5)
 windowFunction.Text_("""So, lad, how's it look? Nice, eh?
@@ -565,4 +605,16 @@ Seeing the grass follow the wind.
 You decide to get up and leave, facing the journey ahead of you.
 You detect a slight hint of a smoky smell and you turn to your left.
 
-a small, bearded man""")
+a small, bearded man stands proudly next to you, carrying a large pot of
+boiling stew and a wooden crate of vegetables.""")
+windowFunction.Text_("""He looks at you and looks at your shoes, resting his hand
+on his chin. He is seemingly trying to figure out who you are""")
+windowFunction.Text_("""In a weirdly deep, rumbly voice, the gnome-like man asks a question.
+Fancy some sigma stew? Skibidi dop dop dop yes yes?
+
+You look at him in utter bewilderment for a good few seconds.
+
+Oh thank the heavens! A young'un not twisted by the reins of brain squelching content!
+Please, take this bowl as a token of my gratificatio- wait, are you the hero?
+
+You grin at him and reach your hand out. He shakes your hand with a shocking amount of force.""")
