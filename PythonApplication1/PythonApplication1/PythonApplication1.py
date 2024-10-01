@@ -17,7 +17,7 @@ enemyPower = 10
 enemyState = "def" #USE RANDOM TO CHANGE IN BATTLE
 sectionReal = 0
 listHistory = []
-xpNeeded = 100
+xpNeeded = 75
 inventory = [["Apple", 5],["Apple", 5]]
 apple = ["Apple", 5]
 HeartyStew = ["Mysterious Stew", -99999]
@@ -33,9 +33,11 @@ tick = 0
 levelLock = 0
 amountFights = 0
 selfPower = 5
+healthInitial = 50
 #-------------------------------PARAMETERS-----------------------------------¦
 level_requirement = 1
 area_enabled = 1
+slopFree = 0
 
 
 # FUNCTION DECLARATIONS
@@ -94,6 +96,7 @@ def areaLevel_(): #MAIN GAMEPLAY FUNC
     global sectionReal
     global sectionPause
     global area_enabled
+    global amountFights
     if area_enabled == 1:
         xpNeeded = ((50**(1 + (level * 0.05))))
 
@@ -116,6 +119,7 @@ def areaLevel_(): #MAIN GAMEPLAY FUNC
             index = 1
         elif location == 3:
             locationNmae = "Vesenid"
+            index = 2
 
         sectionReal = section - ((location-1) * 5) #CALCULATE DISPLAY SECTION
         print(locationName, "-", str(sectionReal)) #PRINT DISPLAY SECTION
@@ -140,7 +144,7 @@ def areaLevel_(): #MAIN GAMEPLAY FUNC
             amountFights = 0
             levelLock = 0
             if section == 5 or section == 10 or section == 15\
-               or section == 20 or section == 25:
+                or section == 20 or section == 25:
                 section = section + 1
                 return
             if level - 1 >= section:
@@ -177,44 +181,32 @@ def searchArea_():
 
 
 def battle_():
-    global health
-    global sectionReal
+    global health, sectionReal
     injured = 0
     Enemy1 = Enemy()
     windowFunction.ClearWindow_
-    health = 50 + (1**(level * 0.01))
-    if location == 1:
-        Enemy1.health = 60 + (sectionReal * 4)
-        Enemy1.power = 10 + (sectionReal) #SETUP ENEMY STATS
-    elif location == 2:
-        Enemy1.health = 80 + (sectionReal * 6)
-        Enemy1.power = 15 + (sectionReal)
+    health = healthInitial + (1**(level * 0.01))
+    Enemy1.health = 60 + (20 * (location - 1)) + sectionReal * (2 * (location + 1))
+    Enemy1.power = (5 * (location + 1)) + sectionReal
     enemyBufferHp = Enemy1.health
     battleKeep_(Enemy1, injured, enemyBufferHp)
     power = equipped.damage
 
 def battleKeep_(Enemy, injured, enemyBufferHp):
-    global listHistory
-    global health
-    global xp
-    global level
+    global listHistory, health, xp, level, selfPower
     power = equipped.damage + selfPower
-    win = False
-    battleEnding = True
-    if location == 1:
-        windowFunction.art(1)
-    if location == 2:
-        windowFunction.art(1)
-    print("")
-    print("")
-    print("")
-    print("")
+    win, battleEnding = False, True
+    windowFunction.art(1)
+    print("""
+    
+    
+    
+    """)
     Enemy.enemyStateChoose_()
     print("Enemy Health: ", Enemy.health, "    ", 
-          "Enemy Power: ", Enemy.power)
-    print("")
-    print("Your Health:", health, "    ", "Your Power: ", power)
-    print("Choose your action to roll.\n1. Attack\n2. Defend")
+          "Enemy Power: ", Enemy.power,"\n\nYour Health:", health,
+          "      Your Power:", power, "\n",
+          "Choose your action to roll.\n1. Attack\n2. Defend")
     inputAtkLoop = 0 #LOOP FOR THE ATTACK INPUT SYSTEM
     while inputAtkLoop == 0:
         playerAction = input("")
@@ -225,9 +217,8 @@ def battleKeep_(Enemy, injured, enemyBufferHp):
     time.sleep(1.5)
 
     if int(playerAction) == 1:#IF ATTACK
-        attack = 1
-        damage = 0
-        damageTake = 0
+        windowFunction.hit_anim_()
+        attack, damage, damageTake = 1, 0, 0
         if Enemy.state == "Attack":
             print("Enemy chooses to attack!")
             time.sleep(1.5)
@@ -237,7 +228,7 @@ def battleKeep_(Enemy, injured, enemyBufferHp):
                 damage = random.randint((int(0.5 * power))\
                     ,int((0.7 * power)))
                 #SET ATTACK DAMAGE
-            elif roll in range(1, 5):
+            elif roll in range(1, 6):
                 damageTake = Enemy.power
                 damage = random.randint(power,int(power * 1.1))
             elif roll == 6:
@@ -250,49 +241,46 @@ def battleKeep_(Enemy, injured, enemyBufferHp):
             time.sleep(1.5)
         if Enemy.state == "Defend":
             print("Enemy chooses to defend!")
-            time.sleep(1)
             time.sleep(1.5)
-            if roll == 1:
-                damage = 0
-                windowFunction.typeSlowbattle_("Attack invalidated...")
-                time.sleep(1.5)
-            if roll in range(1,5):
-                damage = power * 0.5
-                windowFunction.typeSlowbattle_("Attack damage halved...")
-                time.sleep(1.5)
-            if roll == 6:
-                damage = power
-                windowFunction.typeSlowbattle_("You decide to push through" 
-                " the shielding and hit at full damage!")
-                time.sleep(1.5)
-
+            match roll:
+                case 1:
+                    damage = 0
+                    windowFunction.typeSlowbattle_("Attack invalidated...")
+                    time.sleep(1.5)
+                case 2 | 3 | 4 | 5:
+                    damage = power * 0.5
+                    windowFunction.typeSlowbattle_("Attack damage halved...")
+                    time.sleep(1.5)
+                case 6:
+                    damage = power
+                    windowFunction.typeSlowbattle_("You decide to push through"
+                    " the shielding and hit at full damage!")
+                    time.sleep(1.5)
 
     elif int(playerAction) == 2: #  
-        attack = 0
-        damage = 0
-        damageTake = 0
+        attack, damage, damageTake = 0, 0, 0
         if Enemy.state == "Attack":
             print("Enemy chooses to attack!")
-            listHistory.append("atk")
             time.sleep(1.5)
-            if roll == 1:
-                damageTake = 0.5 * Enemy.power
-                print("Defended", (damageTake, "damage"))
-                time.sleep(1.5)
-            elif roll in range(1, 4):
-                damageTake = 0.25 * Enemy.power
-                print("Defended", (0.75 * Enemy.power), "damage")
-                time.sleep(1.5)
-            elif roll == 5:
-                damageTake = 0
-                windowFunction.typeSlow_("Defended all damage")
-                time.sleep(1.5)
-            elif roll == 6:
-                if health < 100:
-                    health = health + (int(health/10))
-                windowFunction.typeSlowbattle_(
-                    "You will heal 10% of your health!")
-                time.sleep(0.8)
+            match roll:
+                case 1:
+                    damageTake = 0.5 * Enemy.power
+                    print("Defended", (damageTake, "damage"))
+                    time.sleep(1.5)
+                case 2 | 3 | 4:
+                    damageTake = 0.25 * Enemy.power
+                    print("Defended", (0.75 * Enemy.power), "damage")
+                    time.sleep(1.5)
+                case 5:
+                    damageTake = 0
+                    windowFunction.typeSlow_("Defended all damage")
+                    time.sleep(1.5)
+                case 6:
+                    if health < 100:
+                        health = health + (int(health/10))
+                    windowFunction.typeSlowbattle_(
+                        "You will heal 10% of your health!")
+                    time.sleep(0.8)
 
 
         elif Enemy.state == "Defend":
@@ -311,24 +299,24 @@ def battleKeep_(Enemy, injured, enemyBufferHp):
         if Enemy.health > 0:
             battleKeep_(Enemy, injured, enemyBufferHp)
 
-    if section != 5 or section != 10 or section != 15 or section != 20 or section != 25:
+    if section % 5 != 0:
         if Enemy.health <= 0 and battleEnding == True:
             windowFunction.ClearFrame_()
-            windowFunction.typeSlow_("Battle completed!")
+            windowFunction.typeSlow_("Battle completed!")#SHOW BATTLE COMPLETE
             print("")
-            windowFunction.typeVerySlow_("You have earnt...\n")
-            xpEarnt = round(enemyBufferHp / random.randint(2,6))
-            print(xpEarnt, "XP!")
-            time.sleep(1.5)
-            xpNeeded = ((50**(1 + (level * 0.05))))
+            windowFunction.typeVerySlow_("You have earnt...\n")#SHOW HOW MUCH EARNT
+            xpEarnt = round((enemyBufferHp / random.randint(2,6)) * 2)
+            print(xpEarnt, "XP!")#SHOW XP EARNT
+            time.sleep(1.5)#PAUSE
+            xpNeeded = ((30**(1 + (level * 0.05))))#CALCULATE XP NEEDED FOR LEVEL UP
             xp = xp + round(xpEarnt)
-            battleEnding = False
-            while xp >= xpNeeded:
-                level = level + 1
-                xp = xp - xpNeeded
+            battleEnding = False #MAKE SURE THAT THIS MENU DOESNT REPEAT AFTER AREALEVEL ENDS
+            while xp >= xpNeeded:#WHILE XP EXCEEDS REQUIRED FOR NEXT LEVEL
+                level = level + 1#INCREASE LEVEL
+                xp = xp - xpNeeded#REMOVE XP
                 windowFunction.typeVerySlow_("You have levelled up!           ")
                 print("Level", level - 1, "to", level, "!")
-                selfPower += 3
+                selfPower += 3#INCREASE POWER BY 3 PER LEVEL
                 xp = round(xp)
                 time.sleep(3)
             areaLevel_()
@@ -427,13 +415,9 @@ while slopFree == 0:
         if codeList[i] == "LEVELOFF":
             level_requirement = 0
             slopFree = 1
-        if codeList[i] == "NOGAME":
+        elif codeList[i] == "NOGAME":
             area_enabled = 0
             slopFree = 1
-        else:
-            slopFree = 1
-            area_enabled = 1
-            level_requirement = 1
 windowFunction.Center_() #CENTER NAME PROMPT
 exited = False
 while exited == False:
@@ -443,23 +427,26 @@ while exited == False:
     3. Fast (the intended speed)
     """)
     textSpeed = input()
-    if textSpeed == "1":
-        windowFunction.textSpeed1 = 0.07
-        windowFunction.textSpeedSlow = 0.2
-        windowFunction.textSpeedVerySlow = 0.4
-        exited = True
-    elif textSpeed == "2":
-        windowFunction.textSpeed1 = 0.035
-        windowFunction.textSpeedSlow = 0.15
-        windowFunction.textSpeedVerySlow = 0.25
-        exited = True
-    elif textSpeed == "3":
-        windowFunction.textSpeed1 = 0.0235
-        windowFunction.textSpeedSlow = 0.06
-        windowFunction.textSpeedVerySlow = 0.15
-        exited = True
-    else:
-        windowFunction.ClearFrame_()
+    match textSpeed:
+        case "1":
+            windowFunction.textSpeed1 = 0.07
+            windowFunction.textSpeedSlow = 0.2
+            windowFunction.textSpeedVerySlow = 0.4
+            exited = True
+        case "2":
+            windowFunction.textSpeed1 = 0.035
+            windowFunction.textSpeedSlow = 0.15
+            windowFunction.textSpeedVerySlow = 0.25
+            exited = True
+        case "3":
+            windowFunction.textSpeed1 = 0.02
+            windowFunction.textSpeedSlow = 0.04
+            windowFunction.textSpeedVerySlow = 0.08
+            exited = True
+        case _:
+            windowFunction.ClearFrame_()
+
+
 windowFunction.typeSlow_("Welcome to a perilous journey. "
                          "There will be challenges and triumphs. "
                          "You have seen nothing as of far.") #SLOW TYPE 1 LINE
@@ -480,7 +467,7 @@ windowFunction.ClearWindow_()#CLEARS WINDOW FULLY
 windowFunction.storySetup_("Bedroom - Section J", 3)
 windowFunction.Text_("""Your heavy eyes slowly begin to lift open as you peer over to your left.
 A small, slightly stained envelope is sitting next to your bed, laid hastily on your bedstand.""")
-respond_(["yes", "ok", "okay", "sure", "alright", "yeah", "y", "yea", ""], "The envelope entices you. Do you consume the envelope?   ")
+respond_(["yes", "ok", "okay", "sure", "alright", "yeah", "y", "yea"], "The envelope entices you. Do you consume the envelope?   ")
 if tick == 1:
     windowFunction.Text_("""Your life goes on as normal. You wake up, eat a meal, and drink some alcohol.
 You pick up a small bottle of alcohest and realise that there is a rat dissolved in your drink. 
@@ -489,7 +476,7 @@ Your eyes slowly open and a bright flash of fire suddenly appears.
 Your life is now over.""")
     input("Enter to exit game.")
     exit()
-("""The letter is enclosed with a bright red wax seal, which seemingly leaked into the package.
+windowFunction.Text_("""The letter is enclosed with a bright red wax seal, which seemingly leaked into the package.
 You take a slight whiff and the stench of wax enters your nostrils.
 you begin to sit up and you begin to feel relief that the nightmare was over.
 You take another look at the envelope and see a familiar signature""")#USES RAW STRING, WARNING
@@ -523,7 +510,7 @@ windowFunction.storySetup_("Bedroom - Section J", 3)
 windowFunction.Text_("You stare at the letter for a bit more, "
                      "and ultimately decide what must be done.")
 
-respond_(["yes", "ok", "okay", "sure", "alright", "yeah", "y", "yea", ""]
+respond_(["yes", "ok", "okay", "sure", "alright", "yeah", "y", "yea"]
          , "Do you want to journey forward?    ")#QUESTION RESPONSE
 
 if tick == 1:
@@ -578,7 +565,7 @@ windowFunction.Text_("Oi lad, why 'aven't ya grabbed anythin'?\nI'll "
 windowFunction.Text_("SWORD OBTAINED!")
 print("SWORD NAME:", CrazyBlade.name)
 CrazyBlade.active = True
-respond_(["yes", "ok", "okay", "sure", "alright", "yeah", "y", "yea", ""]
+respond_(["yes", "ok", "okay", "sure", "alright", "yeah", "y", "yea"]
          , "Would you like to equip this sword?   ")
 if tick == 1:
     equipped = CrazyBlade
@@ -617,4 +604,26 @@ You look at him in utter bewilderment for a good few seconds.
 Oh thank the heavens! A young'un not twisted by the reins of brain squelching content!
 Please, take this bowl as a token of my gratificatio- wait, are you the hero?
 
-You grin at him and reach your hand out. He shakes your hand with a shocking amount of force.""")
+You grin at him and reach your hand out. He shakes your hand with a shocking amount of force.
+
+He looks at you with a displeased expression after staring at your arms
+
+You realise that I can let you be wanderin' round looking this frail..
+take this. 
+
+He hands you a potion simply labelled 'Vitalis'""")
+respond_(["yes", "ok", "okay", "sure", "alright", "yeah", "y", "yea"], 
+         "Will you drink the potion?    ")
+if tick == 1:
+    healthInitial = 75
+    windowFunction.Text_("""Mate, how does that feel, electrifying, eh?
+You'll be able to absorb whatever comes your way now.""")
+    windowFunction.typeSlow_("HEALTH NOW PERMANENTLY INCREASED BY 25!")
+else:
+    windowFunction.Text_("""You decide to turn down the potion
+
+who knows what you missed out on...""")
+
+windowFunction.Text_("""Now, go out there and do what you must! I'll be waitin
+on you!""")
+areaLevel_()
