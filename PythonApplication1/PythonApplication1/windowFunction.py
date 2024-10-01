@@ -1,160 +1,23 @@
 ﻿import time, types
+textSpeed1 = 0.035
+textSpeedSlow = 0.05
+textSpeedVerySlow = 0.1
 def ClearWindow_(): #CLEAR THE WHOLE WINDOW
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
+    count = 40
+    for i in range(count):
+        print("")
+        time.sleep(0.02)
 
 def ClearFrame_(): #CLEAR THE WHOLE WINDOW
-    print("")
-    print("")
-    print("")
-    print("")
-    print("")
-    print("")
-    print("")
-    print("")
-    print("")
-    print("")
-    print("")
-    print("")
-    print("")
-    print("")
-    print("")
-    print("")
-    print("")
-    print("")
-    print("")
-    print("")
-    print("")
-    print("")
-    print("")
-    print("")
-    print("")
-    print("")
-    print("")
-    print("")
-    print("")
-    print("")
-    print("")
-    print("")
-    print("")
-    print("")
-    print("")
+    count = 34
+    for i in range(count):
+        print("")
 
 def MoveUpTop_(): #MOVE TEXT TO TOP
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
-    print("")
-    time.sleep(0.02)
+    count = 29
+    for i in range(count):
+        print("")
+        time.sleep(0.02)
 
 def Center_(): #CENTER TEXT
     print("")
@@ -464,6 +327,29 @@ def art(index): #INDEX FOR ASCII ART
 ░█▓▓█▓░▓█▓▓▒▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓█▓██▓▓██▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▒▒▓▓▓▓█▓▓█░█ 
 ░░███▒▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▒▓▓▓▓▓██▓▓▓▓▓▓▒▓▒▓▒▓▓▓▓▓▓▓▒▓▒▓▓▓▓▒▓▓▓▓█▓▒░
   ▒▒ ░ ░░░░░░  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░ ░░░   ░░░░  """)
+    elif index == 8:
+        print(R"""████████████████████████████▒                                        ░▒██████████████████████████
+██████████████████████████▓░                                      ░▓█████████████████████████████
+███████████████████████▓░                                       ▓████████████████████████████████
+░▒████████░░░▒▒▒▒░░                                           ░██████████████████████████████████
+ ▒████████▓                                                  ▒███████████████████████████████████
+░█████████▓                                                  ▓███████████████████████████████████
+░██████████                                                  ▒███████████████████████████████████
+ █████████▓                                                         ▓█████████████████▓ ░▓██▓████
+ ▓████████▒                                                          ░▓█████████████▓░      ▓████
+ ▒████████░                                                             ░█████░░░         ░██████
+ ▒███████▓                                   ░████                      ▒█████            ███████
+ ▓███████░                          ░▓▓▓▒▒░  ▓████                      ██████   ░█▒░    ▒███████
+▒███████▓                           ▒█████▒  ▓████  ░███▒    ▒████      ▒█████▒   ▒███░ ░▓███████
+████████▓                           ▒█████░  ▓████  ░███▒    ▒████      ▒██████░   ▓█████████████
+█████████░               ░░▒▓▓████████████████████▒░░███░    ▒████░     ████████▒  ▓█████████████
+██████████░     ░░▒▓██████████████████████████████████████████████░   ░██████████▒░██████████████
+█████████████████████████████████████████████████████████████████████████████████████████████████
+█████████████████████████████████████████████████████████████████████████████████████████████████
+█████████████████████████████████████████████████████████████████████████████████████████████████
+█████████████████████████████████████████████████████████████████████████████████████████████████
+█████████████████████████████████████████████████████████████████████████████████████████████████
+█████████████████████████████████████████████████████████████████████████████████████████████████""")
 
 def locationArt(index): #ART FOR LOCATION
     if index == 0:
@@ -528,20 +414,20 @@ def storySetup_(text, index): #SET CUTSCENE
 def typeSlow_(text): #SLOW TYPING
     for letter in text:
         print(letter, end='')
-        time.sleep(0.035)
+        time.sleep(textSpeed1)
 
 
 
 def typeSlowbattle_(text): #SLOW TYPING
     for letter in text:
         print(letter, end='')
-        time.sleep(0.05)
+        time.sleep(textSpeedSlow)
     print("")
 
 def typeVerySlow_(text): #SLOW TYPING
     for letter in text:
         print(letter, end='')
-        time.sleep(0.1)
+        time.sleep(textSpeedVerySlow)
 
 def flashAnim_(): #ARROW HIT ANIMATION
     flash = 0.2
