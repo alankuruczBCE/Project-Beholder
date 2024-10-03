@@ -27,18 +27,17 @@ slopList = ["john pork", "skibidi", "toilet", "soy", "wojak", "baby gronk"
             "costco", "among us", "sus", "mewing", "sigma", "hawk", 
             "tuah", "haircut"]#LIST TO STOP ENTRY OF BRAINROT NAMES
 codeList = ["LEVELOFF", "NOGAME", "FASTSPEED"]
-slopFree = 0
-sectionPause = 0
 tick = 0
-levelLock = 0
 amountFights = 0
 selfPower = 5
+healthBoost = 0
 healthInitial = 50
 #-------------------------------PARAMETERS-----------------------------------¦
 level_requirement = 1
 area_enabled = 1
 slopFree = 0
-
+levelLock = 0
+sectionPause = 0
 
 # FUNCTION DECLARATIONS
 def respond_(responseWords = "test", responseText = "What do you respond " 
@@ -58,23 +57,29 @@ def respond_(responseWords = "test", responseText = "What do you respond "
 
 
 class Weapon:
-    def __init__(self, index, name, damage, description, active):
-        self.index = index
+    def __init__(self, name):
         self.name = name
-        self.damage = damage
-        self.description = description
-        self.active = active
+        
+        if name == "Training Basher":
+            self.index = 1
+            self.damage = 30
+            self.description = """It may or may not do the job. 
+            I don't think it will but it's up to you."""
+            self.active = True
+        elif name == "Light Steel":
+            self.index = 2
+            self.damage = 60
+            self.description = "It's basic, it hurts to get hit by."
+            self.active = False
+
 
     def summary(self):
         print(self.index, ":", self.name, "  Damage: ", str(self.damage), 
               "\nDescription:  ", self.description)
 
-RustyBlade = Weapon(1,"Rusty Training Blade", 20, 
-"It may or may not do the job. "
-"I don't think it will but it's up to you.", True)
-CrazyBlade = Weapon(2,"Basic Basher", 40, "A basic sword. "
-                    "It works somewhat well", False)
-equipped = RustyBlade
+Blade1 = Weapon("Training Basher")
+Blade2 = Weapon("Light Steel")
+equipped = Blade1
 power = equipped.damage
 class Enemy:
     def __init__(self):
@@ -97,8 +102,11 @@ def areaLevel_(): #MAIN GAMEPLAY FUNC
     global sectionPause
     global area_enabled
     global amountFights
-    if area_enabled == 1:
-        xpNeeded = ((50**(1 + (level * 0.05))))
+    while area_enabled == 1:
+        if sectionReal == 5:
+            section = section + 1
+            return
+        xpNeeded = (30 + (level * 5))
 
         windowFunction.ClearFrame_()
         print("Level: " + str(level) + "            " + "XP - " + str(xp) + 
@@ -108,7 +116,7 @@ def areaLevel_(): #MAIN GAMEPLAY FUNC
 
         if section in range(0,6): #CALCULATE SECTION
             location = 1
-        elif section in range(6, 11):
+        elif section in range(5, 11):
             location = 2
 
         if location == 1: #FIND LOCATION NAME, SELECT INDEX FOR PRINTING
@@ -143,20 +151,14 @@ def areaLevel_(): #MAIN GAMEPLAY FUNC
         elif selection == "3":
             amountFights = 0
             levelLock = 0
-            if section == 5 or section == 10 or section == 15\
-                or section == 20 or section == 25:
-                section = section + 1
-                return
             if level - 1 >= section:
                 section = section + 1
-            areaLevel_()
-        elif selection == "4":
-            addItem_(inventory, apple)
             areaLevel_()
         else:
             areaLevel_()
     else:
         pass
+
 
 def addItem_(listicle,element):
     listicle.append(element)
@@ -193,7 +195,7 @@ def battle_():
     power = equipped.damage
 
 def battleKeep_(Enemy, injured, enemyBufferHp):
-    global listHistory, health, xp, level, selfPower
+    global listHistory, health, xp, level, selfPower, healthBoost
     power = equipped.damage + selfPower
     win, battleEnding = False, True
     windowFunction.art(1)
@@ -299,27 +301,32 @@ def battleKeep_(Enemy, injured, enemyBufferHp):
         if Enemy.health > 0:
             battleKeep_(Enemy, injured, enemyBufferHp)
 
-    if section % 5 != 0:
-        if Enemy.health <= 0 and battleEnding == True:
-            windowFunction.ClearFrame_()
-            windowFunction.typeSlow_("Battle completed!")#SHOW BATTLE COMPLETE
-            print("")
-            windowFunction.typeVerySlow_("You have earnt...\n")#SHOW HOW MUCH EARNT
-            xpEarnt = round((enemyBufferHp / random.randint(2,6)) * 2)
-            print(xpEarnt, "XP!")#SHOW XP EARNT
-            time.sleep(1.5)#PAUSE
-            xpNeeded = ((30**(1 + (level * 0.05))))#CALCULATE XP NEEDED FOR LEVEL UP
-            xp = xp + round(xpEarnt)
-            battleEnding = False #MAKE SURE THAT THIS MENU DOESNT REPEAT AFTER AREALEVEL ENDS
-            while xp >= xpNeeded:#WHILE XP EXCEEDS REQUIRED FOR NEXT LEVEL
-                level = level + 1#INCREASE LEVEL
-                xp = xp - xpNeeded#REMOVE XP
-                windowFunction.typeVerySlow_("You have levelled up!           ")
-                print("Level", level - 1, "to", level, "!")
-                selfPower += 3#INCREASE POWER BY 3 PER LEVEL
-                xp = round(xp)
-                time.sleep(3)
-            areaLevel_()
+    if Enemy.health <= 0 and battleEnding == True:
+        windowFunction.ClearFrame_()
+        windowFunction.typeSlow_("Battle completed!")#SHOW BATTLE COMPLETE
+        print("")
+        windowFunction.typeVerySlow_("You have earnt...\n")#SHOW HOW MUCH EARNT
+        xpEarnt = round((enemyBufferHp / random.randint(3,6)) * 2)
+        print(xpEarnt, "XP!")#SHOW XP EARNT
+        time.sleep(1.5)#PAUSE
+        xpNeeded = 30 + (level * 5)#CALCULATE XP NEEDED FOR LEVEL UP
+        #xp = xp + round(xpEarnt
+        xp = xp + 350
+        battleEnding = False #MAKE SURE THAT THIS MENU DOESNT REPEAT AFTER AREALEVEL ENDS
+        if xp >= xpNeeded:
+            levelMenu = True
+
+    while levelMenu == True:
+        level = level + 1#INCREASE LEVEL
+        xp = xp - xpNeeded#REMOVE XP
+        windowFunction.typeVerySlow_("You have levelled up!           ")
+        print("Level", level - 1, "to", level, "!")
+        selfPower += 3#INCREASE POWER BY 3 PER LEVEL
+        xp = round(xp)
+        if xp < xpNeeded:
+            levelMenu = False
+    time.sleep(3)
+    areaLevel_()
 
 def inventory_():
     global equipped
@@ -338,22 +345,22 @@ def inventory_():
         print()
     print()
 
-    if RustyBlade.active == True:
-        if equipped == RustyBlade:
+    if Blade1.active == True:
+        if equipped == Blade1:
             print("EQUIPPED")
-            power = RustyBlade.damage
-        RustyBlade.summary()
+            power = Blade1.damage
+        Blade1.summary()
         print()
-    if CrazyBlade.active == True:
-        if equipped == CrazyBlade:
+    if Blade2.active == True:
+        if equipped == Blade2:
             print("EQUIPPED")
-            power = CrazyBlade.damage
-        CrazyBlade.summary()
+            power = Blade2.damage
+        Blade2.summary()
         print()
     print("0: Return to menu  ")
-    if RustyBlade.active == True:
+    if Blade1.active == True:
         print("1: Equip Rusty Blade  ")
-    if CrazyBlade.active == True:
+    if Blade2.active == True:
         print("2: Equip Crazy Blade  ")
     while exited == False:
         selection = input("")
@@ -361,12 +368,12 @@ def inventory_():
             exited = True
             areaLevel_()
         elif selection == "1":
-            if RustyBlade.active == True:
-                equipped = RustyBlade
+            if Blade1.active == True:
+                equipped = Blade1
                 inventory_()
         elif selection == "2":
-            if CrazyBlade.active == True:
-                equipped = CrazyBlade
+            if Blade2.active == True:
+                equipped = Blade2
                 inventory_()
 
 
@@ -398,7 +405,6 @@ time.sleep(0.3)
 print("Loading...")
 windowFunction.ClearWindow_
 windowFunction.BeholdAnimate()
-
 while slopFree == 0:
     slopLength = len(slopList)
     codeLen = len(codeList)
@@ -412,11 +418,15 @@ while slopFree == 0:
             time.sleep(5)
             exit()
     for i in range(codeLen):
-        if codeList[i] == "LEVELOFF":
+        if name == "LEVELOFF":
             level_requirement = 0
             slopFree = 1
-        elif codeList[i] == "NOGAME":
+        elif name == "NOGAME":
             area_enabled = 0
+            slopFree = 1
+        else:
+            level_requirement = 1
+            area_enabled = 1
             slopFree = 1
 windowFunction.Center_() #CENTER NAME PROMPT
 exited = False
@@ -489,11 +499,13 @@ input()
 
 windowFunction.ClearFrame_()
 windowFunction.storySetup_("Bedroom - Section J", 3)
-windowFunction.Text_("The door to your left swings straight open, and a "
-                     "figure stands within the doorway, clenching his arm towards his body.")
+windowFunction.Text_("""The door to your left swings straight open, and a 
+figure stands within the doorway, clenching his arm towards his body.""")
 print()
-windowFunction.Text_("It's too late.\n\nI'm sorry.\n\nWe were too late."
-                     "\n\nWhat do we do.. leader?")
+windowFunction.Text_("""It's too late.      
+I'm sorry.     
+We were too late.     
+\n\nWhat do we do.. leader?""")
 respond_()#QUESTION RESPONSE WITH
 windowFunction.Text_("""Look. I may be a military manager but I don't think I can do anything. 
 I don't think us with our thousands of soldiers can make a dent.
@@ -514,14 +526,14 @@ respond_(["yes", "ok", "okay", "sure", "alright", "yeah", "y", "yea"]
          , "Do you want to journey forward?    ")#QUESTION RESPONSE
 
 if tick == 1:
-    windowFunction.Text_("Okay okay.. Here's your sword. "
-                         "It's very rusty but it's the best I have currently,"
-                         "\nNow here are some apples to eat on the way.")
-    areaLevel_()
+    windowFunction.Text_("""Okay okay.. Here's your sword. 
+It's very rusty but it's the best I have currently, 
+Now here are some apples to eat on the way.""")
+    areaLevel_()#//-------------------------------------- ACT 1 - BEGINNING --------------------------------------------------//
 else:
-    windowFunction.Text_("Okay, traitor. Your father would have hoped that"
-                         " you could've avenged him but now I\nSee"
-                         " that is all for naught. It's sad to do,\n\n\n")
+    windowFunction.Text_("""Okay, traitor. Your father would have hoped that 
+you could've avenged him but now I see 
+that is all for naught. It's sad to do.""")
     windowFunction.typeVerySlow_("But it must be done.")
     exit
 
@@ -535,7 +547,7 @@ THE BLOODY FOOTY'S ON MATE! GET IN!
 You hesitate for a moment but you eventually decide to cross the doorway.""")
 windowFunction.storySetup_("Barry's Metalworks", 5)
 windowFunction.Text_("""Got you, didn't I lad!
-I got your back mate.""")
+I got your back mate""")
 print(name)
 windowFunction.Text_("""wasn't it?
 Anyways, I know your story, and safe to say our entire village is on board.
@@ -559,20 +571,20 @@ print("VIEW INFO ABOUT ALLY? Y/N")
 infoView_("barry goldarms", "master blacksmith", "the old arms",
          "67", "a lot", "hammerfield", "james somerton", "janet silver")
 windowFunction.storySetup_("Barry's Metalworks", 5)
-windowFunction.Text_("Oi lad, why 'aven't ya grabbed anythin'?\nI'll "
-                     "just pick out the lightest one in me collection."
-                     "\nHere, a basic, light blade that's suitable for you")
+windowFunction.Text_("""Oi lad, why 'aven't ya grabbed anythin'? I'll 
+just pick out the lightest one in me collection. 
+Here, a basic, light blade that's suitable for you""")
 windowFunction.Text_("SWORD OBTAINED!")
-print("SWORD NAME:", CrazyBlade.name)
-CrazyBlade.active = True
+print("SWORD NAME:", Blade2.name)
+Blade2.active = True
 respond_(["yes", "ok", "okay", "sure", "alright", "yeah", "y", "yea"]
          , "Would you like to equip this sword?   ")
 if tick == 1:
-    equipped = CrazyBlade
+    equipped = Blade2
     windowFunction.Text_("Sword now equipped")
 
 
-areaLevel_()
+areaLevel_()#//---------------------------------------------ACT 2 - A RANDOM GIFT---------------------------------------------//
 windowFunction.storySetup_("Barry's Metalworks", 5)
 windowFunction.Text_("""So, lad, how's it look? Nice, eh?
 Give it a swing or two, see how it feels.
@@ -622,8 +634,10 @@ You'll be able to absorb whatever comes your way now.""")
 else:
     windowFunction.Text_("""You decide to turn down the potion
 
-who knows what you missed out on...""")
+who knows what you missed out on... """)
 
 windowFunction.Text_("""Now, go out there and do what you must! I'll be waitin
 on you!""")
-areaLevel_()
+areaLevel_()#//----------------------------------ACT 3 - SUNDOWNING---------------------------------//
+windowFunction.storySetup_("Michal's Arch - Vesenid", 10)
+windowFunction.Text_("")
