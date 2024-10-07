@@ -1,9 +1,11 @@
 ﻿#-----------------------------------IMPORTS----------------------------------¦
-import time, windowFunction, random
+import time
+import windowFunction
+import random
 
 #-----------------------------------VARIABLES--------------------------------¦
 health = 50
-level = 1.0
+level = 99.0
 xp = 0
 power = 9999
 location = 0
@@ -26,15 +28,14 @@ slopList = ["john pork", "skibidi", "toilet", "soy", "wojak", "baby gronk"
             "fanum", "brainrot", "camera", "mario", "chud", "chad", 
             "costco", "among us", "sus", "mewing", "sigma", "hawk", 
             "tuah", "haircut"]#LIST TO STOP ENTRY OF BRAINROT NAMES
-codeList = ["LEVELOFF", "NOGAME", "FASTSPEED"]
+codeList = ["LEVELOFF"]
 tick = 0
 amountFights = 0
-selfPower = 5
+selfPower = 9999
 healthBoost = 0
 healthInitial = 50
 #-------------------------------PARAMETERS-----------------------------------¦
 level_requirement = 1
-area_enabled = 1
 slopFree = 0
 levelLock = 0
 sectionPause = 0
@@ -100,64 +101,62 @@ def areaLevel_(): #MAIN GAMEPLAY FUNC
     global selection #MAKE VARIABLES GLOBAL
     global sectionReal
     global sectionPause
-    global area_enabled
     global amountFights
-    while area_enabled == 1:
-        if sectionReal == 5:
-            section = section + 1
-            return
-        xpNeeded = (30 + (level * 5))
+    sectionReal = section - ((location - 1) * 5)
+    xpNeeded = (30 + (level * 5))
 
-        windowFunction.ClearFrame_()
-        print("Level: " + str(level) + "            " + "XP - " + str(xp) + 
-              "             " + "XP until level", str(int(level) + 1)
-             + " -", str(round(xpNeeded) - xp)) #PRINT STATS
+    windowFunction.ClearFrame_()
+    print("Level: " + str(level) + "            " + "XP - " + str(xp) + 
+            "             " + "XP until level", str(int(level) + 1)
+            + " -", str(round(xpNeeded) - xp)) #PRINT STATS
         
 
-        if section in range(0,6): #CALCULATE SECTION
-            location = 1
-        elif section in range(5, 11):
-            location = 2
+    if section in range(0,6): #CALCULATE SECTION
+        location = 1
+    elif section in range(5, 11):
+        location = 2
+    elif section in range(10, 16):
+        location = 3
 
-        if location == 1: #FIND LOCATION NAME, SELECT INDEX FOR PRINTING
-            locationName = "Granfield"
-            index = 0
-        elif location == 2:
-            locationName = "Granfield - Hills"
-            index = 1
-        elif location == 3:
-            locationNmae = "Vesenid"
-            index = 2
+    sectionReal = section - ((location - 1) * 5)
+    if location == 1: #FIND LOCATION NAME, SELECT INDEX FOR PRINTING
+        locationName = "Granfield"
+        index = 0
+    elif location == 2:
+        locationName = "Granfield - Hills"
+        index = 1
+    elif location == 3:
+        locationNmae = "Vesenid"
+        index = 2
+    print(locationName, "-", str(sectionReal)) #PRINT DISPLAY SECTION
+    windowFunction.locationArt(index) #PRINT LOCATION ART
 
-        sectionReal = section - ((location-1) * 5) #CALCULATE DISPLAY SECTION
-        print(locationName, "-", str(sectionReal)) #PRINT DISPLAY SECTION
-
-        windowFunction.locationArt(index) #PRINT LOCATION ART
-
-    
-        if level - 1 >= section or level_requirement == 0:
-            print("1 - Fight \n2 - View Inventory \n3 - Progress \n"
-                  "4- Add an Apple")#PRINT OPTIONS
-        else:
-            print("1 - Fight \n2 - View Inventory \n3 - "
-                  "(NEED TO LEVEL UP TO PROGRESS) \n4- Add an Apple")
-                    #PRINT OPTIONS
-
-        selection = input("") #SELECTION DETECTION CODE
-        if selection == "1":
-            searchArea_()
-        elif selection == "2":
-            inventory_()
-        elif selection == "3":
-            amountFights = 0
-            levelLock = 0
-            if level - 1 >= section:
-                section = section + 1
-            areaLevel_()
-        else:
-            areaLevel_()
+    if level - 1 >= section:
+        print("1 - Fight \n2 - View Inventory \n3 - Progress \n"
+                "4- Add an Apple")#PRINT OPTIONS
     else:
-        pass
+        print("1 - Fight \n2 - View Inventory \n3 - "
+                "(NEED TO LEVEL UP TO PROGRESS) \n4- Add an Apple")
+                #PRINT OPTIONS
+
+    selection = input("") #SELECTION DETECTION CODE
+    if selection == "1":
+        searchArea_()
+    elif selection == "2":
+        inventory_()
+    elif selection == "3":
+        amountFights = 0
+        levelLock = 0
+        if level - 1 >= section:
+            if sectionReal == 5:
+                section = section + 1
+                return
+            else:
+                section = section + 1
+                areaLevel_()
+    else:
+        areaLevel_()
+
 
 
 def addItem_(listicle,element):
@@ -182,66 +181,71 @@ def searchArea_():
         areaLevel_()
 
 
-def battle_():
+def battle_():     #INITIALISE BATTLE
     global health, sectionReal
-    injured = 0
-    Enemy1 = Enemy()
-    windowFunction.ClearWindow_
-    health = healthInitial + (1**(level * 0.01))
-    Enemy1.health = 60 + (20 * (location - 1)) + sectionReal * (2 * (location + 1))
-    Enemy1.power = (5 * (location + 1)) + sectionReal
-    enemyBufferHp = Enemy1.health
-    battleKeep_(Enemy1, injured, enemyBufferHp)
-    power = equipped.damage
+    Enemy1 = Enemy()#CREATE ENEMY
+    windowFunction.ClearWindow_() #CLEAR THE WINDOW
+    health = healthInitial + (1**(level * 0.01))#SET PLAYER HEALTH
+    Enemy1.health = 60 + (20 * (location - 1)) + \
+        sectionReal * (2 * (location + 1))
+    #SET ENEMY HEALTH
+    Enemy1.power = (5 * (location + 1)) + sectionReal#SET ENEMY POWER
+    enemyBufferHp = Enemy1.health#SET ENEMY MAX HEALTH
+    battleKeep_(Enemy1, injured, enemyBufferHp)#ENTER MAIN BATTLE
 
-def battleKeep_(Enemy, injured, enemyBufferHp):
-    global listHistory, health, xp, level, selfPower, healthBoost
-    power = equipped.damage + selfPower
-    win, battleEnding = False, True
-    windowFunction.art(1)
+def battleKeep_(Enemy, injured, enemyBufferHp):#MAIN BATTLE CODE
+    global listHistory, health, xp, level, selfPower, healthBoost, levelMenu, xpNeeded
+    power = equipped.damage + selfPower#SET PLAYER POWER
+    win = False 
+    levelMenu = False
+    windowFunction.art(1)#PRINT BATTLE ARTT
     print("""
     
     
     
-    """)
-    Enemy.enemyStateChoose_()
+    """)#CREATE SPACES
+    Enemy.enemyStateChoose_()#ENEMY PICKS STATE
     print("Enemy Health: ", Enemy.health, "    ", 
           "Enemy Power: ", Enemy.power,"\n\nYour Health:", health,
           "      Your Power:", power, "\n",
           "Choose your action to roll.\n1. Attack\n2. Defend")
+            #PRINT STATS FOR BATTLE
     inputAtkLoop = 0 #LOOP FOR THE ATTACK INPUT SYSTEM
     while inputAtkLoop == 0:
         playerAction = input("")
         if playerAction == "1" or playerAction == "2":
-            inputAtkLoop = 1
+            inputAtkLoop = 1#BREAK LOOP IF CORRECT ACTION PICKED
     roll = random.randint(1,6) #ROLL
     print("You have rolled a", roll) #SHOWS ROLL RESULT
     time.sleep(1.5)
 
     if int(playerAction) == 1:#IF ATTACK
-        windowFunction.hit_anim_()
-        attack, damage, damageTake = 1, 0, 0
-        if Enemy.state == "Attack":
+        windowFunction.hit_anim_()#PLAY HIT ANIMATION
+        attack = 1#ATTACKING IS SELECTED
+        damage = 0#RESET DAMAGE GIVEN + TAKEN
+        damageTake = 0
+        if Enemy.state == "Attack":#IF ENEMY IS ATTACKING
             print("Enemy chooses to attack!")
             time.sleep(1.5)
-            if roll == 1:
-                damageTake = Enemy.power * 2
-                print("You rolled a 1, so the enemy does double damage.")
-                damage = random.randint((int(0.5 * power))\
-                    ,int((0.7 * power)))
-                #SET ATTACK DAMAGE
-            elif roll in range(1, 6):
-                damageTake = Enemy.power
-                damage = random.randint(power,int(power * 1.1))
-            elif roll == 6:
-                damageTake = Enemy.power
-                damage = power * 1.5
-                windowFunction.typeVerySlow_("1.5x damage!")
-            print("You have dealt", damage, "damage.")
+            match roll:#SWITCH STATEMENT FOR ROLLING
+                case 1:
+                    damageTake = Enemy.power * 2#ENEMY DOUBLES DAMAGE
+                    print("You rolled a 1, so the enemy does double damage.")
+                    damage = random.randint((int(0.5 * power))\
+                        ,int((0.7 * power))) #SET DAMAGE
+                case 2 | 3 | 4 | 5:#IF ROLL BETWEEN 2 AND 5
+                    damageTake = Enemy.power#DAMAGE TAKEN NORMAL
+                    damage = random.randint(power,int(power * 1.1))
+                    #DAMAGE AMOUNT SELECTED
+                case 6:
+                    damageTake = Enemy.power
+                    damage = power * 1.5
+                    windowFunction.typeVerySlow_("1.5x damage!")
+            print("You have dealt", damage, "damage.")#SHOW DAMAGE DEALT
             time.sleep(1.5)
-            print("You have lost", damageTake, "health.")
+            print("You have lost", damageTake, "health.")#SHOW HEALTH LOST
             time.sleep(1.5)
-        if Enemy.state == "Defend":
+        if Enemy.state == "Defend":#IF ENEMY DEFENDING
             print("Enemy chooses to defend!")
             time.sleep(1.5)
             match roll:
@@ -301,7 +305,8 @@ def battleKeep_(Enemy, injured, enemyBufferHp):
         if Enemy.health > 0:
             battleKeep_(Enemy, injured, enemyBufferHp)
 
-    if Enemy.health <= 0 and battleEnding == True:
+    if Enemy.health <= 0:
+        Enemy.health = 1
         windowFunction.ClearFrame_()
         windowFunction.typeSlow_("Battle completed!")#SHOW BATTLE COMPLETE
         print("")
@@ -310,23 +315,25 @@ def battleKeep_(Enemy, injured, enemyBufferHp):
         print(xpEarnt, "XP!")#SHOW XP EARNT
         time.sleep(1.5)#PAUSE
         xpNeeded = 30 + (level * 5)#CALCULATE XP NEEDED FOR LEVEL UP
-        #xp = xp + round(xpEarnt
-        xp = xp + 350
-        battleEnding = False #MAKE SURE THAT THIS MENU DOESNT REPEAT AFTER AREALEVEL ENDS
+        xp = xp + 400
+        #xp = xp + round(xpEarnt)
         if xp >= xpNeeded:
-            levelMenu = True
+            xp_menu_()
 
-    while levelMenu == True:
-        level = level + 1#INCREASE LEVEL
-        xp = xp - xpNeeded#REMOVE XP
-        windowFunction.typeVerySlow_("You have levelled up!           ")
-        print("Level", level - 1, "to", level, "!")
-        selfPower += 3#INCREASE POWER BY 3 PER LEVEL
-        xp = round(xp)
-        if xp < xpNeeded:
-            levelMenu = False
     time.sleep(3)
     areaLevel_()
+
+def xp_menu_():
+    global xp, level, xpNeeded, selfPower, levelMenu
+    level = level + 1#INCREASE LEVEL
+    xp = xp - xpNeeded#REMOVE XP
+    windowFunction.typeVerySlow_("You have levelled up!           ")
+    print("Level", level - 1, "to", level, "!")
+    selfPower += 3#INCREASE POWER BY 3 PER LEVEL
+    xp = round(xp)
+    if xp >= xpNeeded:
+        xp_menu_()
+
 
 def inventory_():
     global equipped
@@ -421,9 +428,6 @@ while slopFree == 0:
         if name == "LEVELOFF":
             level_requirement = 0
             slopFree = 1
-        elif name == "NOGAME":
-            area_enabled = 0
-            slopFree = 1
         else:
             level_requirement = 1
             area_enabled = 1
@@ -456,14 +460,12 @@ while exited == False:
         case _:
             windowFunction.ClearFrame_()
 
-
 windowFunction.typeSlow_("Welcome to a perilous journey. "
                          "There will be challenges and triumphs. "
                          "You have seen nothing as of far.") #SLOW TYPE 1 LINE
 time.sleep(1)
 windowFunction.storySetup_("Mladav Bolen - 1654", 0) 
 #SHOW TEXT ON TOP OF IMAGE, PRINT IMAGE BELOW
-
 windowFunction.Text_("you are surrounded by an air of desolateness.\nA faint "
                      "rustle breaks the silence for a second.\nIs it time..? "
                      "I'm probably not going to come out walking but it's "
