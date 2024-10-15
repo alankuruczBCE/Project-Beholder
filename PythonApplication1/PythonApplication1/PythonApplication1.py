@@ -5,10 +5,9 @@ import random
 
 #-----------------------------------VARIABLES--------------------------------¦
 health = 50
-level = 99.0
+level = 1000.0
 xp = 0
-power = 9999
-location = 0
+power = 0
 section = 1
 location = 1
 locationName = "Test"
@@ -30,8 +29,7 @@ slopList = ["john pork", "skibidi", "toilet", "soy", "wojak", "baby gronk"
             "tuah", "haircut"]#LIST TO STOP ENTRY OF BRAINROT NAMES
 codeList = ["LEVELOFF"]
 tick = 0
-amountFights = 0
-selfPower = 9999
+selfPower = 0
 healthBoost = 0
 healthInitial = 50
 #-------------------------------PARAMETERS-----------------------------------¦
@@ -39,14 +37,19 @@ level_requirement = 1
 slopFree = 0
 levelLock = 0
 sectionPause = 0
+bossBattle = 0
 
 # FUNCTION DECLARATIONS
 def respond_(responseWords = "test", responseText = "What do you respond " 
              "with?    "):
+    responseValidated = 0
     global tick
     print()
     print()
-    response = input(responseText)
+    while responseValidated == 0:
+        response = input(responseText)
+        if response != "":
+            responseValidated = 1
     tick = 0
     print()
     print()
@@ -101,10 +104,8 @@ def areaLevel_(): #MAIN GAMEPLAY FUNC
     global selection #MAKE VARIABLES GLOBAL
     global sectionReal
     global sectionPause
-    global amountFights
-    sectionReal = section - ((location - 1) * 5)
+    global bossBattle
     xpNeeded = (30 + (level * 5))
-
     windowFunction.ClearFrame_()
     print("Level: " + str(level) + "            " + "XP - " + str(xp) + 
             "             " + "XP until level", str(int(level) + 1)
@@ -113,12 +114,21 @@ def areaLevel_(): #MAIN GAMEPLAY FUNC
 
     if section in range(0,6): #CALCULATE SECTION
         location = 1
-    elif section in range(5, 11):
+    elif section in range(6, 11):
         location = 2
-    elif section in range(10, 16):
+    elif section in range(11, 16):
         location = 3
+    elif section in range(16, 21):
+        location = 4
+    elif section in range(21, 26):
+        location = 5
+    elif section == 26:
+        location = 6
+        bossBattle = 1
+    elif section in range(31, 36):
+        location = 7
 
-    sectionReal = section - ((location - 1) * 5)
+    sectionReal = section - ((location - 1) * 5)##NOTE -------------------------------------------------------------------- MAKE THE SECTION 31 WHEN BOSS DIES
     if location == 1: #FIND LOCATION NAME, SELECT INDEX FOR PRINTING
         locationName = "Granfield"
         index = 0
@@ -128,30 +138,45 @@ def areaLevel_(): #MAIN GAMEPLAY FUNC
     elif location == 3:
         locationNmae = "Vesenid"
         index = 2
+    elif location == 4:
+        locationName = "No Man's Forest"
+        index = 3
+    elif location == 5:
+        locationName = "Mlavav Bolen"
+        index = 4
+    elif location == 6:
+        locationName = "BOSS"
+        index = 5
+    elif location == 7:
+        locationName = "Field Of Dreams"
+        index = 6
+
     print(locationName, "-", str(sectionReal)) #PRINT DISPLAY SECTION
     windowFunction.locationArt(index) #PRINT LOCATION ART
 
-    if level - 1 >= section:
-        print("1 - Fight \n2 - View Inventory \n3 - Progress \n"
-                "4- Add an Apple")#PRINT OPTIONS
+    if bossBattle == 0:
+        if level - 1 >= section:
+            print("1 - Fight \n2 - View Inventory \n3 - Progress \n"
+                    "4- Add an Apple")#PRINT OPTIONS
+        else:
+            print("1 - Fight \n2 - View Inventory \n3 - "
+                    "(NEED TO LEVEL UP TO PROGRESS) \n4- Add an Apple")
+                    #PRINT OPTIONS
     else:
-        print("1 - Fight \n2 - View Inventory \n3 - "
-                "(NEED TO LEVEL UP TO PROGRESS) \n4- Add an Apple")
-                #PRINT OPTIONS
+        print("1 - Fight the boss.")
 
     selection = input("") #SELECTION DETECTION CODE
     if selection == "1":
         searchArea_()
-    elif selection == "2":
-        inventory_()
-    elif selection == "3":
-        amountFights = 0
-        levelLock = 0
-        if level - 1 >= section:
-            if sectionReal == 5:
+    if bossBattle == 0:
+        if selection == "2":
+            inventory_()
+        elif selection == "3":
+            levelLock = 0
+            if section % 5 == 0:
                 section = section + 1
                 return
-            else:
+            elif level - 1 >= section:
                 section = section + 1
                 areaLevel_()
     else:
@@ -165,36 +190,41 @@ def addItem_(listicle,element):
 
 
 def searchArea_():
-    global levelLock
-    global amountFights
-    if amountFights > 9:
-        levelLock = 1
-    if levelLock == 0:
-        amountFights += 1
-        windowFunction.typeSlow_("Fight Initiated! Get Ready!")
-        time.sleep(1)
-        battle_()
-        areaLevel_()
-    else:
-        windowFunction.typeSlow_("No enemies left. Progress to continue.")
-        time.sleep(1)
-        areaLevel_()
+    windowFunction.typeSlow_("Fight Initiated! Get Ready!")
+    time.sleep(1)
+    battle_()
 
 
 def battle_():     #INITIALISE BATTLE
-    global health, sectionReal
+    global health
+    global bossBattle
+    global sectionReal
     Enemy1 = Enemy()#CREATE ENEMY
     windowFunction.ClearWindow_() #CLEAR THE WINDOW
     health = healthInitial + (1**(level * 0.01))#SET PLAYER HEALTH
-    Enemy1.health = 60 + (20 * (location - 1)) + \
-        sectionReal * (2 * (location + 1))
+    if bossBattle == 0:
+        Enemy1.health = 60 + (20 * (location - 1)) + \
+            sectionReal * (2 * (location + 1))
+    else:
+        Enemy1.health = 300
     #SET ENEMY HEALTH
-    Enemy1.power = (5 * (location + 1)) + sectionReal#SET ENEMY POWER
+    if bossBattle == 0:
+        Enemy1.power = (5 * (location + 1)) + sectionReal#SET ENEMY POWER
+    else:
+        Enemy1.power = 60
     enemyBufferHp = Enemy1.health#SET ENEMY MAX HEALTH
-    battleKeep_(Enemy1, injured, enemyBufferHp)#ENTER MAIN BATTLE
+    battleKeep_(Enemy1, enemyBufferHp)#ENTER MAIN BATTLE
 
-def battleKeep_(Enemy, injured, enemyBufferHp):#MAIN BATTLE CODE
-    global listHistory, health, xp, level, selfPower, healthBoost, levelMenu, xpNeeded
+def battleKeep_(Enemy, enemyBufferHp):#MAIN BATTLE CODE
+    global listHistory
+    global health
+    global xp
+    global level
+    global selfPower
+    global healthBoost
+    global levelMenu
+    global xpNeeded
+    global bossBattle
     power = equipped.damage + selfPower#SET PLAYER POWER
     win = False 
     levelMenu = False
@@ -205,10 +235,16 @@ def battleKeep_(Enemy, injured, enemyBufferHp):#MAIN BATTLE CODE
     
     """)#CREATE SPACES
     Enemy.enemyStateChoose_()#ENEMY PICKS STATE
-    print("Enemy Health: ", Enemy.health, "    ", 
-          "Enemy Power: ", Enemy.power,"\n\nYour Health:", health,
-          "      Your Power:", power, "\n",
-          "Choose your action to roll.\n1. Attack\n2. Defend")
+    if bossBattle == 0:
+        print("Enemy Health: ", Enemy.health, "    ", 
+              "Enemy Power: ", Enemy.power,"\n\nYour Health:", health,
+              "      Your Power:", power, "\n",
+              "Choose your action to roll.\n1. Attack\n2. Defend")
+    else:
+        print("Baron's Health: ", Enemy.health, "    ", 
+              "Baron's Power: ", Enemy.power,"\n\nYour Health:", health,
+              "      Your Power:", power, "\n",
+              "Choose your action to roll.\n1. Attack\n2. Defend")
             #PRINT STATS FOR BATTLE
     inputAtkLoop = 0 #LOOP FOR THE ATTACK INPUT SYSTEM
     while inputAtkLoop == 0:
@@ -303,7 +339,7 @@ def battleKeep_(Enemy, injured, enemyBufferHp):#MAIN BATTLE CODE
     if win == False:
         health = health - damageTake
         if Enemy.health > 0:
-            battleKeep_(Enemy, injured, enemyBufferHp)
+            battleKeep_(Enemy, enemyBufferHp)
 
     if Enemy.health <= 0:
         Enemy.health = 1
@@ -324,15 +360,20 @@ def battleKeep_(Enemy, injured, enemyBufferHp):#MAIN BATTLE CODE
     areaLevel_()
 
 def xp_menu_():
-    global xp, level, xpNeeded, selfPower, levelMenu
+    global xp
+    global level
+    global xpNeeded
+    global healthInitial
     level = level + 1#INCREASE LEVEL
     xp = xp - xpNeeded#REMOVE XP
     windowFunction.typeVerySlow_("You have levelled up!           ")
     print("Level", level - 1, "to", level, "!")
-    selfPower += 3#INCREASE POWER BY 3 PER LEVEL
+    selfPower += 2#INCREASE POWER BY 3 PER LEVEL
+    healthInitial += 3
     xp = round(xp)
     if xp >= xpNeeded:
         xp_menu_()
+
 
 
 def inventory_():
@@ -401,7 +442,7 @@ def infoView_(name, job, location, age, weight, birthplace, parent1, parent2):
         elif selection == "N":
             exited = True
 
-# MAIN GAME CODE
+# --------------------------------------------------------------MAIN GAME CODE
 windowFunction.ClearFrame_()
 print("Loading", end='\r') #Print loading, do a carriage return
 time.sleep(0.3) #Pause for 0.3 seconds
@@ -476,10 +517,11 @@ windowFunction.Text_("Oh. What's this then... another one? "
 
 
 windowFunction.ClearWindow_()#CLEARS WINDOW FULLY
-windowFunction.storySetup_("Bedroom - Section J", 3)
+windowFunction.storySetup_("Bedroom - Velograd Heights", 3)
 windowFunction.Text_("""Your heavy eyes slowly begin to lift open as you peer over to your left.
 A small, slightly stained envelope is sitting next to your bed, laid hastily on your bedstand.""")
-respond_(["yes", "ok", "okay", "sure", "alright", "yeah", "y", "yea"], "The envelope entices you. Do you consume the envelope?   ")
+respond_(["yes", "ok", "okay", "sure", "alright", "yeah", "y", "yea"], \
+    "The envelope entices you. Do you consume the envelope?   ")
 if tick == 1:
     windowFunction.Text_("""Your life goes on as normal. You wake up, eat a meal, and drink some alcohol.
 You pick up a small bottle of alcohest and realise that there is a rat dissolved in your drink. 
@@ -500,7 +542,7 @@ input()
 
 
 windowFunction.ClearFrame_()
-windowFunction.storySetup_("Bedroom - Section J", 3)
+windowFunction.storySetup_("Bedroom - Velograd Heights", 3)
 windowFunction.Text_("""The door to your left swings straight open, and a 
 figure stands within the doorway, clenching his arm towards his body.""")
 print()
@@ -509,18 +551,21 @@ I'm sorry.
 We were too late.     
 \n\nWhat do we do.. leader?""")
 respond_()#QUESTION RESPONSE WITH
-windowFunction.Text_("""Look. I may be a military manager but I don't think I can do anything. 
+windowFunction.Text_("""Look. I may be a fighter, 
+but I don't think I can do anything. 
 I don't think us with our thousands of soldiers can make a dent.
 This is your battle.\nThe only one who can fight this fight is you. 
 It is written in The Prophecy Of The 3 Heads.
 The only one who can truly win is the oprhan of our village..
-Everyone here knows that this is you. You need to be the man to save this world. I lend my trust to you for this, the entire city lends their trust.
+Everyone here knows that this is you. 
+You need to be the man to save this world. 
+I lend my trust to you for this, the entire city lends their trust.
 Fight, not just for me, or you, but for them.
 Thank you.""")
 
 
 windowFunction.ClearFrame_()
-windowFunction.storySetup_("Bedroom - Section J", 3)
+windowFunction.storySetup_("Bedroom - Velograd Heights", 3)
 windowFunction.Text_("You stare at the letter for a bit more, "
                      "and ultimately decide what must be done.")
 
@@ -531,7 +576,7 @@ if tick == 1:
     windowFunction.Text_("""Okay okay.. Here's your sword. 
 It's very rusty but it's the best I have currently, 
 Now here are some apples to eat on the way.""")
-    areaLevel_()#//-------------------------------------- ACT 1 - BEGINNING --------------------------------------------------//
+    areaLevel_()#//--------------- ACT 1 - BEGINNING -----------------------//
 else:
     windowFunction.Text_("""Okay, traitor. Your father would have hoped that 
 you could've avenged him but now I see 
@@ -553,20 +598,22 @@ I got your back mate""")
 print(name)
 windowFunction.Text_("""wasn't it?
 Anyways, I know your story, and safe to say our entire village is on board.
-Essentially, you're welcome to take anythin', be it a sword or armour, or even some bloody rest.
+Essentially, you're welcome to take anythin', 
+be it a sword or armour, or even some bloody rest.
 I know you need some. 
 Good luck mate, you'll need it.
 Now I'll let you just get some rest in my tavern. Night.""")
 windowFunction.storySetup_("Tavern Room C53", 6)
-windowFunction.Text_("""You think to yourself about what awaits you. The path, the fights
-and everything inbetween.
+windowFunction.Text_("""You think to yourself about what awaits you.
+The path, the fights and everything inbetween.
 The thoughts rush through your mind but one stays hidden.
 Will you succeed?
 
 You manage to ignore the thoughts and get some good sleep.""")
 windowFunction.storySetup_("Barry's Metalworks", 5)
-windowFunction.Text_("""You wake up and instantly travel to Barry's hidden store.
-You were told the previous night that you could take things but you would rather wait for him.
+windowFunction.Text_("""You wake up and walk briskly to Barry's hidden store.
+You were told the previous night that you could take things,
+but you would rather wait for him.
 
 NEW ALLY DISCOVERED: BARRY GOLDARMS""")
 print("VIEW INFO ABOUT ALLY? Y/N")
@@ -586,21 +633,28 @@ if tick == 1:
     windowFunction.Text_("Sword now equipped")
 
 
-areaLevel_()#//---------------------------------------------ACT 2 - A RANDOM GIFT---------------------------------------------//
+areaLevel_()#//---------------------ACT 2 - A RANDOM GIFT-------------------//
 windowFunction.storySetup_("Barry's Metalworks", 5)
 windowFunction.Text_("""So, lad, how's it look? Nice, eh?
 Give it a swing or two, see how it feels.
 
-Alright. I've kept you 'ere long enough, lad. You better be off on your journey.""")
+Alright. I've kept you 'ere long enough, lad. 
+You better be off on your journey.""")
 windowFunction.storySetup_("Forest Path", 8)
+
 windowFunction.Text_("""After walking for miles, 
 You decide to think about how life has brought you here.
-From stumbling out of your bad and reading a letter to walking down a path of revenge.
-You watched as the clouds slowly drifted and pulled out your newly obtained blade.
-Feeling the shiny, primed metal on the surface, you began to reminisce about all of the
-times you saw soldiers heaving giant swords as a child, and your wish of being able to wield
-one of those swords.
-It's almost cathartic sitting here, looking at the trees. Seeing the leaves sway.
+From stumbling out of your bed 
+to reading a letter 
+to walking down a path of revenge.
+You watched as the clouds slowly drifted 
+and pulled out your newly obtained blade.
+Feeling the shiny, primed metal on the surface, 
+you began to reminisce about all of the
+times you saw soldiers heaving giant swords as a child, 
+and your wish of being able to wield one of those swords.
+It's almost cathartic sitting here, looking at the trees. 
+Seeing the leaves sway.
 Seeing the grass follow the wind.
 
 You decide to get up and leave, facing the journey ahead of you.
@@ -608,31 +662,38 @@ You detect a slight hint of a smoky smell and you turn to your left.
 
 a small, bearded man stands proudly next to you, carrying a large pot of
 boiling stew and a wooden crate of vegetables.""")
-windowFunction.Text_("""He looks at you and looks at your shoes, resting his hand
-on his chin. He is seemingly trying to figure out who you are""")
-windowFunction.Text_("""In a weirdly deep, rumbly voice, the gnome-like man asks a question.
+
+windowFunction.Text_("""He looks at you and looks at your shoes, 
+resting his hand on his chin. 
+He is seemingly trying to figure out who you are""")
+
+windowFunction.Text_("""In a weirdly deep, rumbly voice, 
+the gnome-like man asks a question.
 Fancy some sigma stew? Skibidi dop dop dop yes yes?
 
 You look at him in utter bewilderment for a good few seconds.
 
-Oh thank the heavens! A young'un not twisted by the reins of brain squelching content!
-Please, take this bowl as a token of my gratificatio- wait, are you the hero?
+Oh thank the heavens! 
+A young'un not twisted by the reins of brain squelching content!
+Please, take this bowl as a token of my gratificatio- 
+wait, are you the hero?
 
-You grin at him and reach your hand out. He shakes your hand with a shocking amount of force.
+You grin at him and reach your hand out. 
+He shakes your hand with a shocking amount of force.
 
 He looks at you with a displeased expression after staring at your arms
 
-You realise that I can let you be wanderin' round looking this frail..
+You realise that I can't let you be wanderin' round looking this frail..
 take this. 
 
 He hands you a potion simply labelled 'Vitalis'""")
 respond_(["yes", "ok", "okay", "sure", "alright", "yeah", "y", "yea"], 
          "Will you drink the potion?    ")
 if tick == 1:
-    healthInitial = 75
+    healthInitial += 20
     windowFunction.Text_("""Mate, how does that feel, electrifying, eh?
 You'll be able to absorb whatever comes your way now.""")
-    windowFunction.typeSlow_("HEALTH NOW PERMANENTLY INCREASED BY 25!")
+    windowFunction.typeSlow_("HEALTH NOW PERMANENTLY INCREASED BY 20!")
 else:
     windowFunction.Text_("""You decide to turn down the potion
 
@@ -640,6 +701,52 @@ who knows what you missed out on... """)
 
 windowFunction.Text_("""Now, go out there and do what you must! I'll be waitin
 on you!""")
-areaLevel_()#//----------------------------------ACT 3 - SUNDOWNING---------------------------------//
+areaLevel_()
+#//---------------------------ACT 3 - SUNDOWNING----------------------------//
 windowFunction.storySetup_("Michal's Arch - Vesenid", 10)
-windowFunction.Text_("")
+windowFunction.Text_("""As you approach the arch you see a large sign
+labelled 'In Honour Of Jop Aintoine Lepelaar.'
+You notice that the sign is tightly strung with the twine of jute, meaning
+that you know you have ventured out far enough.
+
+You further examine the sign. Something seems wrong with it""")
+respond_(["yes", "ok", "okay", "sure", "alright", "yeah", "y", "yea"],\
+    "Do you pull on the sign?")
+if tick == 1:
+    selfPower += 20
+    windowFunction.Text_("""Pulling on the sign strengthened you!
+    +20 POWER!""")
+    
+windowFunction.Text_("""You walk further and you enter a bursting city
+filled with vibrancy and colour.
+Beautiful houses, adorned in many punchy styles line the streets
+and hundreds of vendors have their stalls placed on the street,
+selling many assorted foodstuffs and crafts, such as good luck charms,
+gemstones and fruits""")
+
+windowFunction.Text_("""You begin to walk around the street further and 
+you recognise that the sun is beginning to set.
+The sky begins to fade into a mellow shade of purple and
+the sun slowly pulls down. You watch as people begin
+shutting their stores and begin slowly walking into their homes.
+
+As of nowhere you look to a wall and see a map.
+a map, which takes you to your goal.""")
+
+windowFunction.Text_("""You'd have to take a shortcut to get there, but it's
+definitely better than walking for days upon days to reach it.
+The 'shortcut' is having to pass through a forest,
+but not just any forest. A forest which no man has walked out of.""")
+windowFunction.storySetup_("Map - Mladav Bolen", 11)
+windowFunction.Text_("CURRENTLY VIEWING MAP")
+windowFunction.ClearFrame_()
+areaLevel_()
+#//--------------------------ACT 4: ENTRY INTO HELL-------------------------//
+windowFunction.storySetup_("Mladav Bolen", 12)
+windowFunction.Text_("""You are minutes away from fighting the fight.
+You just need to get through one more wave, and freedom is at your grasp.
+
+All that surrounds you is the air of smoke, flames and stench of war.
+
+You unsheath your sword for the final time. begin.""")
+areaLevel_()
