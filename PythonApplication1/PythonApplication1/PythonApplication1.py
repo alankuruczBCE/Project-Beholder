@@ -372,6 +372,9 @@ def battleKeep_(Enemy, enemyBufferHp):#MAIN BATTLE CODE
         #xp = xp + round(xpEarnt)
         if xp >= xpNeeded:
             xp_menu_()
+        else:
+            time.sleep(3)
+        areaLevel_()
     elif Enemy.health <= 0 and bossBattle == 1:
         bossBeat = 1
         return
@@ -379,12 +382,11 @@ def battleKeep_(Enemy, enemyBufferHp):#MAIN BATTLE CODE
     if health <= 0:
         losses += 1
         save_apply_()
+        areaLevel_()
     elif health <= 0 and bossBattle == 1:
         bossLoss = 1
         return
 
-    time.sleep(3)
-    areaLevel_()
 
 def xp_menu_():
     global xp
