@@ -1,8 +1,5 @@
 ﻿#-----------------------------------IMPORTS----------------------------------¦
-from lib2to3.refactor import RefactoringTool
 import time
-from tkinter import CENTER
-from turtle import clear
 import windowFunction
 import random
 
