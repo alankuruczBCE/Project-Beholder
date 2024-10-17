@@ -1,15 +1,16 @@
 ﻿#-----------------------------------IMPORTS----------------------------------¦
-from genericpath import isfile
+from lib2to3.refactor import RefactoringTool
 import time
+from tkinter import CENTER
+from turtle import clear
 import windowFunction
 import random
-import os
 
 #-----------------------------------VARIABLES--------------------------------¦
 health = 50
 level = 1.0
 xp = 0
-power = 0
+power = 15
 section = 1
 location = 1
 locationName = "Test"
@@ -118,6 +119,9 @@ def areaLevel_(): #MAIN GAMEPLAY FUNC
     global sectionReal
     global sectionPause
     global bossBattle
+    global mysteryFight
+    if section == 35:
+        mysteryFight = 1
     xpNeeded = (30 + (level * 5))
     windowFunction.ClearFrame_()
     print("Level: " + str(level) + "            " + "XP - " + str(xp) + 
@@ -140,9 +144,8 @@ def areaLevel_(): #MAIN GAMEPLAY FUNC
         bossBattle = 1
     elif section in range(31, 36):
         location = 7
+        bossBattle = 0
 
-    if section == 36:
-        mysteryFight = 1
 
     sectionReal = section - ((location - 1) * 5)##NOTE -------------------------------------------------------------------- MAKE THE SECTION 31 WHEN BOSS DIES
     if location == 1: #FIND LOCATION NAME, SELECT INDEX FOR PRINTING
@@ -169,34 +172,47 @@ def areaLevel_(): #MAIN GAMEPLAY FUNC
 
     print(locationName, "-", str(sectionReal)) #PRINT DISPLAY SECTION
     windowFunction.locationArt(index) #PRINT LOCATION ART
-
     if bossBattle == 0:
-        if level - 1 >= section:
-            print("1 - Fight \n2 - View Inventory \n3 - Progress \n"
-                    "4- Add an Apple")#PRINT OPTIONS
-        else:
+        if mysteryFight == 1:
             print("1 - Fight \n2 - View Inventory \n3 - "
-                    "(NEED TO LEVEL UP TO PROGRESS) \n4- Add an Apple")
-                    #PRINT OPTIONS
+                    "(NEED TO LEVEL UP TO PROGRESS)")
+        elif level - 1 >= section or mysteryFight == 0:
+            print("1 - Fight \n2 - View Inventory \n3 - Progress")#PRINT OPTIONS
     else:
         print("1 - Fight the boss.")
 
-    selection = input("") #SELECTION DETECTION CODE
-    if selection == "1":
-        searchArea_()
-    if bossBattle == 0:
-        if selection == "2":
+    selection = input() #SELECTION DETECTION CODE
+    if bossBattle == 1:
+        if selection == "1":
+            searchArea_()
+        else:
+            areaLevel_()
+            return
+    if mysteryFight == 1:
+        if selection == "1":
+            searchArea_()
+        elif selection == "2":
+            inventory()
+        else:
+            areaLevel_()
+            return
+    else:
+        if selection == "1":
+            searchArea_()
+        elif selection == "2":
             inventory_()
         elif selection == "3":
-            levelLock = 0
-            if section % 5 == 0:
-                section = section + 1
-                return
-            elif level - 1 >= section:
-                section = section + 1
-                areaLevel_()
-    else:
-        areaLevel_()
+            if mysteryFight == 0:
+                levelLock = 0
+                if section % 5 == 0:
+                    section = section + 1
+                    return
+                elif level - 1 >= section:
+                    section = section + 1
+                    areaLevel_()
+        else:
+            areaLevel_()
+            return
 
 
 
@@ -215,17 +231,22 @@ def battle_():     #INITIALISE BATTLE
     global health
     global bossBattle
     global sectionReal
+    global mysteryFight
     Enemy1 = Enemy()#CREATE ENEMY
     windowFunction.ClearWindow_() #CLEAR THE WINDOW
     health = healthInitial + (1**(level * 0.01))#SET PLAYER HEALTH
     if bossBattle == 0:
         Enemy1.health = 60 + (20 * (location - 1)) + \
             sectionReal * (2 * (location + 1))
+    if mysteryFight == 1:
+        Enemy1.health = 999999
     else:
         Enemy1.health = 300
     #SET ENEMY HEALTH
     if bossBattle == 0:
         Enemy1.power = (5 * (location + 1)) + sectionReal#SET ENEMY POWER
+    if mysteryFight == 1:
+        Enemy1.power = 999999
     else:
         Enemy1.power = 60
     enemyBufferHp = Enemy1.health#SET ENEMY MAX HEALTH
@@ -241,27 +262,70 @@ def battleKeep_(Enemy, enemyBufferHp):#MAIN BATTLE CODE
     global levelMenu
     global xpNeeded
     global bossBattle
+    global mysteryFight
+    global losses
+    global section
     power = equipped.damage + selfPower#SET PLAYER POWER
     win = False 
     levelMenu = False
     if bossBattle == 0:
         windowFunction.art(1)#PRINT BATTLE ARTT
-    else:
+    elif bossBattle == 1:
         windowFunction.locationArt(5)
     print("""
     
     """)#CREATE SPACES
+
+
+    if health <= 0:
+        if bossBattle == 1:
+            section = 31
+            bossLoss = 1
+            return
+        elif mysteryFight == 1:
+            return
+        else:
+            losses += 1
+            save_apply_()
+            areaLevel_()
+
+    if Enemy.health <= 0:
+        if bossBattle == 0 and mysteryFight == 0:
+            Enemy.health = 1
+            windowFunction.ClearFrame_()
+            windowFunction.typeSlow_("Battle completed!")#SHOW BATTLE COMPLETE
+            print("")
+            windowFunction.typeVerySlow_("You have earnt...\n")#SHOW HOW MUCH EARNT
+            xpEarnt = round((enemyBufferHp / random.randint(3,6)) * 2)
+            print(xpEarnt, "XP!")#SHOW XP EARNT
+            time.sleep(1.5)#PAUSE
+            xpNeeded = 30 + (level * 5)#CALCULATE XP NEEDED FOR LEVEL UP
+            xp = xp + round(xpEarnt)
+            #xp = xp + round(xpEarnt)
+            if xp >= xpNeeded:
+                xp_menu_()
+            else:
+                time.sleep(3)
+            areaLevel_()
+        if mysteryFight == 1:
+            return
+        if bossBattle == 1:
+            section = 31
+            bossBeat = 1
+            return
+
+
     Enemy.enemyStateChoose_()#ENEMY PICKS STATE
-    if bossBattle == 0:
-        print("Enemy Health: ", Enemy.health, "    ", 
-              "Enemy Power: ", Enemy.power,"\n\nYour Health:", health,
-              "      Your Power:", power, "\n",
-              "Choose your action to roll.\n1. Attack\n2. Defend")
-    else:
-        print("Baron's Health: ", Enemy.health, "    ", 
-              "Baron's Power: ", Enemy.power,"\n\nYour Health:", health,
-              "      Your Power:", power, "\n",
-              "Choose your action to roll.\n1. Attack\n2. Defend")
+    enemyName = "Enemy's"
+    if bossBattle == 1:
+        enemyName = "Baron's"
+    if mysteryFight == 1:
+        enemyName = "???"
+    print(enemyName, "Health: ", Enemy.health, "    ", 
+            enemyName, "Power: ", Enemy.power,"\n\nYour Health:", health,
+            "      Your Power:", power, "\n",
+            "Choose your action to roll.\n1. Attack\n2. Defend")
+
             #PRINT STATS FOR BATTLE
     inputAtkLoop = 0 #LOOP FOR THE ATTACK INPUT SYSTEM
     while inputAtkLoop == 0:
@@ -358,34 +422,8 @@ def battleKeep_(Enemy, enemyBufferHp):#MAIN BATTLE CODE
         if Enemy.health > 0:
             battleKeep_(Enemy, enemyBufferHp)
 
-    if Enemy.health <= 0 and bossBattle == 0:
-        Enemy.health = 1
-        windowFunction.ClearFrame_()
-        windowFunction.typeSlow_("Battle completed!")#SHOW BATTLE COMPLETE
-        print("")
-        windowFunction.typeVerySlow_("You have earnt...\n")#SHOW HOW MUCH EARNT
-        xpEarnt = round((enemyBufferHp / random.randint(3,6)) * 2)
-        print(xpEarnt, "XP!")#SHOW XP EARNT
-        time.sleep(1.5)#PAUSE
-        xpNeeded = 30 + (level * 5)#CALCULATE XP NEEDED FOR LEVEL UP
-        xp = xp + round(xpEarnt)
-        #xp = xp + round(xpEarnt)
-        if xp >= xpNeeded:
-            xp_menu_()
-        else:
-            time.sleep(3)
-        areaLevel_()
-    elif Enemy.health <= 0 and bossBattle == 1:
-        bossBeat = 1
-        return
 
-    if health <= 0:
-        losses += 1
-        save_apply_()
-        areaLevel_()
-    elif health <= 0 and bossBattle == 1:
-        bossLoss = 1
-        return
+
 
 
 def xp_menu_():
@@ -504,11 +542,22 @@ while slopFree == 0:
         if name == "LEVELOFF":
             level_requirement = 0
             slopFree = 1
+        elif name == "leveldiv":
+            try:#ERROR HANDLING EXAMPLE
+                level / 4.5
+            except FloatingPointError:
+                print("""LEVEL NOT DIVISABLE, MAKE SURE YOUR
+                SILLY SELF DIDNT FORGET TO MAKE THE LEVEL A FLOAT
+                WHEN DEBUGGING THE GAME""")
+            except:
+                print("what did you do")
+
         else:
             level_requirement = 1
             area_enabled = 1
             slopFree = 1
 windowFunction.Center_() #CENTER NAME PROMPT
+
 exited = False
 while exited == False:
     windowFunction.typeSlow_("""Select your text speed.
@@ -535,7 +584,6 @@ while exited == False:
             exited = True
         case _:
             windowFunction.ClearFrame_()
-    
 windowFunction.typeSlow_("""Welcome to a perilous journey.
     There will be challenges and triumphs. 
     You have seen nothing as of far.""") #SLOW TYPE 1 LINE
@@ -580,7 +628,7 @@ windowFunction.Text_("""    The letter is enclosed with a
 
 
 
-windowFunction.typeVerySlow_("  Signed - Ludvik Novak, with love")
+windowFunction.typeVerySlow_("  Signed - Ludvik Novak, with love. [ENTER]")
 input()
 
 
@@ -875,3 +923,12 @@ if bossLoss == 1:
     to take a brisk walk and to kill some enemies for fun.""")
 
 areaLevel_()
+windowFunction.ClearFrame_()
+if bossBeat == 1:
+    windowFunction.Text_("""Don't meddle with my things.""")
+if bossLoss == 1:
+    windowFunction.Text_("""...you're a liability.""")
+
+windowFunction.ClearFrame_()
+windowFunction.Text_("Thank you for playing PROJECT BEHOLDER.")
+windowFunction.Center_()
